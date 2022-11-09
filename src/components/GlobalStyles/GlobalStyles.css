@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+    --primary: #14b8a6;
+
+    --default-layout-header-height: 60px;
+    --default-layout-width: 1000px;
+
+    --sm-ad-image-width: 100px;
+    --sm-ad-image-height: 100px;
+    --lg-ad-image-height: 350px;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html{
+    /* font-size: 62.5%; */
+}
+
+body{
+    /* font-size: 1.6rem; */
+    text-rendering: optimizeSpeed;
+}
+
+.ck-editor__editable{
+    height: 200px;
+}

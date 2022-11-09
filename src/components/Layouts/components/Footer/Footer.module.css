@@ -1,0 +1,18 @@
+.wrapper{
+    margin-top: 30px;
+    border-top: 15px solid #f4f4f4;
+}
+
+.inner{
+    width: var(--default-layout-width);
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0;
+}
+
+.content{
+    font-size: 15px;
+    color: gray;
+    margin-top: 5px;
+}

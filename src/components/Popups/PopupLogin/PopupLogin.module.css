@@ -1,0 +1,87 @@
+.wrapper{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(57, 58, 59, 0.5);
+    z-index: 900;
+}
+
+.inner{
+    width: 450px;
+    height: 445px;
+    background-color: white;
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: showPopup linear 0.3s;
+}
+
+@keyframes showPopup {
+    from{
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
+    }
+}
+
+.title{
+    display: flex;
+}
+
+.signin{
+    width: 50%;
+    padding: 10px 0;
+    text-align: center;
+    position: relative;
+    font-weight: bold;
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+    cursor: pointer;
+}
+
+.signin::before{
+    content: '';
+    border: 1px solid var(--primary);
+    position: absolute;
+    top: 10px;
+    right: 0;
+    bottom: 10px;
+}
+
+.signup{
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-weight: bold;
+    color: gray;
+    cursor: pointer;
+}
+
+.form{
+    position: relative;
+}
+
+.form::before{
+    content: '';
+    width: 50%;
+    border-top: 1px solid rgb(173, 172, 172);
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.google{
+    width: 50%;
+    height: 35px;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    border-width: 1px;
+    border-radius: 4px;
+    margin: auto;
+    display: flex;
+    cursor: pointer;
+}

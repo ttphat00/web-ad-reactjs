@@ -1,0 +1,21 @@
+.item{
+    width: 33.33%;
+    border: 1px solid #f4f4f4;
+}
+
+.image{
+    width: 25%;
+    height: var(--sm-ad-image-height);
+}
+
+.content{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding-left: 10px;
+    flex: 1;
+}
+
+.city{
+    margin-top: 5px;
+}

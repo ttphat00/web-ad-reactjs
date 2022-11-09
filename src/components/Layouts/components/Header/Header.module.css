@@ -1,0 +1,48 @@
+.wrapper{
+    height: var(--default-layout-header-height);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    z-index: 99;
+}
+
+.inner{
+    width: var(--default-layout-width);
+    height: 100%;;
+    margin: auto;
+    display: flex;
+    
+}
+
+.logo{
+    width: 180px;
+    display: flex;
+    align-items: center;
+}
+
+.search{
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.login{
+    display: flex;
+    align-items: center;
+    width: 120px;
+    color: rgb(95, 94, 94);
+}
+
+.user:hover .dropdown{
+    display: block;
+}
+
+.post{
+    width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}

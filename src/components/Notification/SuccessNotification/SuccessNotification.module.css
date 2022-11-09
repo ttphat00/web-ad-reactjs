@@ -1,0 +1,25 @@
+.wrapper{
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 250px;
+    z-index: 999;
+    animation: showToast 0.3s ease, hideToast 1s linear 3s forwards;
+}
+
+@keyframes showToast {
+    from{
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to{
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes hideToast {
+    to{
+        opacity: 0;
+    }
+}

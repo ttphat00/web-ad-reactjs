@@ -1,0 +1,16 @@
+.category{
+    margin-top: 30px;
+}
+
+.title{
+    border-bottom: 1px dotted #cacaca;
+}
+
+.list{
+    margin-top: 20px;
+}
+
+.item{
+    width: 25%;
+    margin-bottom: 40px;
+}
