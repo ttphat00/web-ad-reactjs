@@ -6,7 +6,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import axios from 'axios';
 import { apiURL, authorization } from '../../config';
 import ErrorNotification from '../../components/Notification/ErrorNotification';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Post() {
     let navigate = useNavigate();
@@ -120,7 +120,7 @@ function Post() {
             
             today.setHours(today.getHours() + 7);
             expireDate.setDate(today.getDate() + parseInt(duration));
-            // expireDate.setHours(expireDate.getHours() + 7);
+            expireDate.setHours(expireDate.getHours() + 7);
             
             const uploadData = new FormData();
 
@@ -136,17 +136,18 @@ function Post() {
             uploadData.append("createdAt", today);
             uploadData.append("duration", parseInt(duration));
 
-            if((parseInt(user.accountBalance) - parseInt(duration)*10000) >= 0){
-                axios.put(`${apiURL}customers/update-my-info`, {
-                    accountBalance: (parseInt(user.accountBalance) - parseInt(duration)*10000)
-                }, authorization(localStorage.getItem('token')))
+            // if((parseInt(user.accountBalance) - parseInt(duration)*10000) >= 0){
+                // axios.put(`${apiURL}customers/update-my-info`, {
+                //     accountBalance: (parseInt(user.accountBalance) - parseInt(duration)*10000)
+                // }, authorization(localStorage.getItem('token')))
+                //     .then(res => {
+                //         console.log("Tru tien");
+                //         return axios.post(`${apiURL}ads`, uploadData, authorization(localStorage.getItem('token')))
+                //     })
+                    axios.post(`${apiURL}ads`, uploadData, authorization(localStorage.getItem('token')))
                     .then(res => {
-                        // console.log("Tru tien");
-                        axios.post(`${apiURL}ads`, uploadData, authorization(localStorage.getItem('token')))
-                    })
-                    .then(res => {
-                        // console.log('Luu vao bang Ads');
-                        axios.post(`${apiURL}orders`, {
+                        console.log('Luu vao bang Ads');
+                        return axios.post(`${apiURL}orders`, {
                             totalCost: parseInt(duration)*10000,
                             idAd: res.data._id,
                             cost: parseInt(duration)*10000,
@@ -154,7 +155,7 @@ function Post() {
                         }, authorization(localStorage.getItem('token')))
                     })
                     .then(res => {
-                        // console.log('Luu vao bang Orders');
+                        console.log('Luu vao bang Orders');
                         navigate(`/thanh-toan/${res.data._id}`);
                     })
                     .catch(err => {
@@ -166,9 +167,9 @@ function Post() {
                             setShowErrorNotification(false);
                         }, 5000);
                     });
-            }else{
-                window.alert('Số dư tài khoản của bạn không đủ để thực hiện giao dịch này!');
-            }
+            // }else{
+            //     window.alert('Số dư tài khoản của bạn không đủ để thực hiện giao dịch này!');
+            // }
         }
     };
 
@@ -177,7 +178,7 @@ function Post() {
             {showErrorNotification && <ErrorNotification />}
             <div className='mt-[30px] w-[90%] m-auto'>
                 <div className='border-b-[3px] border-teal-500'>
-                    <h2 className='text-xl'>ĐĂNG TIN</h2>
+                    <h2 className='text-xl font-medium'>ĐĂNG TIN</h2>
                 </div>
                 <div className={styles.form}>
                     <form onSubmit={handleSubmit} className="bg-white px-8 pt-6 pb-8 mb-4">
@@ -332,10 +333,11 @@ function Post() {
                                 <div className='h-max mt-2 text-sm ml-2 text-gray-500'>Ngày</div>
                             </div>
                         </div>
-                        <div className="mb-6 flex justify-between bg-[#FFF7F4] px-4 py-4">
+                        <div className="flex justify-between bg-[#FFF7F4] px-4 py-2">
                             <div className='font-bold flex items-center'>Tổng thanh toán:</div>
                             <div className='font-bold text-lg text-teal-500'>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(duration*10000)}</div>
                         </div>
+                        <div className="mb-6 bg-[#FFF7F4] px-4 py-2 text-sm">Khi bấm Đăng tin, bạn đã đồng ý với <Link to='' className='underline hover:text-teal-700'>quy định</Link> của chúng tôi.</div>
                         <div className="flex items-center justify-between">
                             <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline m-auto" type="submit">
                                 <FaRegEdit className='inline mr-1'/>

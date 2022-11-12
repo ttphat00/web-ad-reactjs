@@ -1,0 +1,212 @@
+import axios from "axios";
+import clsx from "clsx";
+import { useEffect, useState, useMemo } from "react";
+import DataTable from 'react-data-table-component';
+import { FaWindowClose } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { apiURL, authorization } from "../../config";
+
+const columns = [
+    {
+        name: '',
+        selector: row => row.image,
+        width: '100px',
+    },
+    {
+        name: 'Tiêu đề',
+        selector: row => row.title,
+        sortable: true,
+        width: '250px',
+    },
+    {
+        name: 'Ngày cập nhật',
+        selector: row => row.createdAt,
+        sortable: true,
+        width: '160px',
+    },
+    {
+        name: 'Ngày hết hạn',
+        selector: row => row.expireDate,
+        sortable: true,
+        width: '160px',
+    },
+    {
+        name: '',
+        selector: row => row.manage,
+        width: '130px',
+    },
+];
+
+// const data = [];
+
+const paginationComponentOptions = {
+    rowsPerPageText: 'Dòng trên trang',
+    rangeSeparatorText: 'trong',
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'Tất cả',
+};
+
+function AdsManage({ handleSetPage }) {
+    const [ tab, setTab ] = useState('Tin đang rao');
+    const [ ads, setAds ] = useState([]);
+    const [ user, setUser ] = useState({});
+
+    //Data table
+    const [ data, setData ] = useState([]);
+
+    //Filtering table*******************
+    const [filterText, setFilterText] = useState('');
+	const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+	const filteredItems = data.filter(
+		item => item.title && item.title.toLowerCase().includes(filterText.toLowerCase()),
+	);
+
+    const subHeaderComponentMemo = useMemo(() => {
+		const handleClear = () => {
+			if (filterText) {
+				setResetPaginationToggle(!resetPaginationToggle);
+				setFilterText('');
+			}
+		};
+
+		return (
+			<div className="relative w-[33%] mt-[10px]">
+                <input 
+                className="w-full text-sm appearance-none border rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                type='text' 
+                placeholder="Lọc theo tiêu đề" 
+                onChange={e => setFilterText(e.target.value)} 
+                value={filterText} 
+                />
+                <FaWindowClose onClick={handleClear} className="absolute top-[2px] right-0 text-2xl rounded text-teal-500 cursor-pointer" />
+            </div>
+		);
+	}, [filterText, resetPaginationToggle]);
+    //*******************Filtering table
+
+    useEffect(() => {
+        handleSetPage('Quản lý tin đăng');
+    }, [])
+
+    const formatTime = (time) => {
+        const createdDate = new Date(time);
+        createdDate.setHours(createdDate.getHours() - 7);
+        const date = createdDate.getDate();
+        const month = createdDate.getMonth() + 1;
+        const year = createdDate.getFullYear();
+        const hour = createdDate.getHours();
+        const minute = createdDate.getMinutes();
+        return `${date}/${month}/${year} - ${hour}:${minute}`;
+    }
+
+    useEffect(() => {
+        axios.get(`${apiURL}customers/profile`, authorization(localStorage.getItem('token')))
+            .then(res => setUser(res.data))
+            .catch(err => console.log(err))
+    }, [])
+
+    useEffect(() => {
+        axios.get(`${apiURL}ads`)
+            .then(res => setAds(res.data))
+            .catch(err => console.log(err))
+    }, [])
+
+    useEffect(() => {
+        const arr = [];
+
+        if(tab==='Tin đang rao'){
+            ads.map(ad => {
+                if(ad.idCustomer===user._id && ad.display){
+                    const row = {
+                        id: ad._id,
+                        image: <Link to={`/chi-tiet/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                        title: ad.title,
+                        createdAt: formatTime(ad.createdAt),
+                        expireDate: formatTime(ad.expireDate),
+                        manage: <div className="flex text-teal-500">
+                            <div className="mr-3 cursor-pointer hover:text-teal-700">Gia hạn</div>
+                            <div className="cursor-pointer hover:text-teal-700">Xóa</div>
+                        </div>,
+                    }
+                    arr.push(row);
+                }
+            });
+        }else if(tab==='Tin hết hạn'){
+            ads.map(ad => {
+                const today = new Date();
+                const expireDate = new Date(ad.expireDate);
+                expireDate.setHours(expireDate.getHours() - 7);
+                if(ad.idCustomer===user._id && expireDate<today){
+                    const row = {
+                        id: ad._id,
+                        image: <Link to=''><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                        title: ad.title,
+                        createdAt: formatTime(ad.createdAt),
+                        expireDate: formatTime(ad.expireDate),
+                        manage: <div className="flex text-teal-500">
+                            <div className="mr-3 cursor-pointer hover:text-teal-700">Gia hạn</div>
+                            <div className="cursor-pointer hover:text-teal-700">Xóa</div>
+                        </div>,
+                    }
+                    arr.push(row);
+                }
+            });
+        }
+
+        setData(arr);
+
+    }, [ads, tab])
+
+    return ( 
+        <div>
+            <div className="flex border-b-[1px] border-gray-200 text-sm">
+                <div onClick={() => setTab('Tin đang rao')} className={clsx("py-1 cursor-pointer mr-10", {
+                    'border-b-[3px]': tab === 'Tin đang rao',
+                    'border-teal-500': tab === 'Tin đang rao',
+                    'hover:text-black': tab !== 'Tin đang rao',
+                    'text-gray-500': tab !== 'Tin đang rao'
+                })}>
+                    Tin đang rao
+                </div>
+                <div onClick={() => setTab('Tin chờ duyệt')} className={clsx("py-1 cursor-pointer mr-10", {
+                    'border-b-[3px]': tab === 'Tin chờ duyệt',
+                    'border-teal-500': tab === 'Tin chờ duyệt',
+                    'hover:text-black': tab !== 'Tin chờ duyệt',
+                    'text-gray-500': tab !== 'Tin chờ duyệt'
+                })}>
+                    Tin chờ duyệt
+                </div>
+                <div onClick={() => setTab('Tin hết hạn')} className={clsx("py-1 cursor-pointer mr-10", {
+                    'border-b-[3px]': tab === 'Tin hết hạn',
+                    'border-teal-500': tab === 'Tin hết hạn',
+                    'hover:text-black': tab !== 'Tin hết hạn',
+                    'text-gray-500': tab !== 'Tin hết hạn'
+                })}>
+                    Tin hết hạn
+                </div>
+                <div onClick={() => setTab('Tin bị từ chối')} className={clsx("py-1 cursor-pointer mr-10", {
+                    'border-b-[3px]': tab === 'Tin bị từ chối',
+                    'border-teal-500': tab === 'Tin bị từ chối',
+                    'hover:text-black': tab !== 'Tin bị từ chối',
+                    'text-gray-500': tab !== 'Tin bị từ chối'
+                })}>
+                    Tin bị từ chối
+                </div>
+            </div>
+            <div>
+                <DataTable
+                    columns={columns}
+                    data={filteredItems}
+                    pagination
+                    paginationComponentOptions={paginationComponentOptions}
+                    paginationResetDefaultPage={resetPaginationToggle}
+                    subHeader
+                    subHeaderComponent={subHeaderComponentMemo}
+                    persistTableHead
+                />
+            </div>
+        </div>
+    );
+}
+
+export default AdsManage;

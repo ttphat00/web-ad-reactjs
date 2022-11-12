@@ -34,7 +34,7 @@ function Detail() {
                 setAd(res.data);
             })
             .catch(err => console.log(err))
-    }, [])
+    }, [title])
 
     useEffect(() => {
         axios.get(`${apiURL}categories`)
@@ -93,13 +93,13 @@ function Detail() {
     return (
         <>
             <div className={styles.category}>
-                <h2 className='text-base'><Link to='/' className='text-teal-500 hover:text-teal-700'>Trang chủ</Link> | {
+                <h2 className='text-sm'><Link to='/' className='text-teal-500 hover:text-teal-700'>Trang chủ</Link> / {
                     categories.map(category => {
                         if(category._id === ad.idCategory){
                             return <Link key={category._id} to={`/danh-muc/${category.title}`} className='text-teal-500 hover:text-teal-700'>{category.title}</Link>
                         }else return null;
                     })
-                } | {title}</h2>
+                } / {title}</h2>
             </div>
             <div className={styles.content}>
                 <div className={styles.detail}>
@@ -131,10 +131,13 @@ function Detail() {
                         <div className='h-max px-2'><FaPhoneVolume className='inline text-xl mr-1' /> {showPhone ? host.phone : (host.phone && `${host.phone.slice(0, 6)}****`)}</div>
                         <div className='h-max px-2 text-sm'>{showPhone ? '' : 'Hiện số'}</div>
                     </div>
+                    <div className={styles.email}>
+                        <div className='px-2 text-sm'><span className='font-medium'>Email liên hệ:</span> <span className='italic font-bold'>{host.email}</span></div>
+                    </div>
                 </div>
             </div>
             <div className={styles.related}>
-                <h3 className='text-lg font-bold bg-[#f4f4f4] px-4 py-2'>Tin đăng cùng danh mục</h3>
+                <h3 className='text-lg font-bold'>Tin đăng cùng danh mục</h3>
                 {ad.idCategory && ad._id && <AdvertisingList cities={cities} idCategory={ad.idCategory} idAd={ad._id} />}
             </div>
         </>

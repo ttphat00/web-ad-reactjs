@@ -6,11 +6,12 @@
     --primary: #14b8a6;
 
     --default-layout-header-height: 60px;
-    --default-layout-width: 1000px;
+    --default-layout-width: 1040px;
+    --dashboard-layout-width: 1120px;
 
     --sm-ad-image-width: 100px;
     --sm-ad-image-height: 100px;
-    --lg-ad-image-height: 350px;
+    --lg-ad-image-height: 250px;
 }
 
 *{
@@ -26,6 +27,7 @@ html{
 body{
     /* font-size: 1.6rem; */
     text-rendering: optimizeSpeed;
+    background-color: #f2f5f8;
 }
 
 .ck-editor__editable{

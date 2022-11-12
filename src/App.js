@@ -1,9 +1,11 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import DefaultLayout from './components/Layouts/DefaultLayout';
 import { publicRoutes } from './routes'
 
 function App() {
+  const [ page, setPage ] = useState();
+
   return (
     <BrowserRouter>
       <div className="App">
@@ -19,7 +21,7 @@ function App() {
               Layout = Fragment;
             }
 
-            return <Route key={index} path={route.path} element={<Layout><Page /></Layout>} />
+            return <Route key={index} path={route.path} element={<Layout page={page}><Page handleSetPage={setPage} /></Layout>} />
           })}
         </Routes>
       </div>

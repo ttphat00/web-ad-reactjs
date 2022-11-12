@@ -53,9 +53,9 @@ function Payment() {
         <>
             <div className='mt-[30px] w-[85%] m-auto'>
                 <div className='border-b-[3px] border-teal-500'>
-                    <h2 className='text-xl'>THÔNG BÁO</h2>
+                    <h2 className='text-xl font-medium'>THÔNG BÁO</h2>
                 </div>
-                <div className='px-6 py-8 text-sm'>
+                <div className='px-6 py-8 text-sm bg-white'>
                     <div>Xin chào <span className='font-medium'>{user.name}</span></div>
                     <div className='mt-1'>Bạn vừa thanh toán tin đăng thành công.</div>
                     <div className='mt-5 font-medium'>Thông tin đơn hàng:</div>
@@ -67,7 +67,7 @@ function Payment() {
                             <div className="py-4 inline-block min-w-full sm:px-6 lg:px-8">
                                 <div className="overflow-hidden">
                                     <table className="min-w-full text-center">
-                                        <thead className="border-b bg-gray-50">
+                                        <thead className="border-b bg-[#D9EDE9]">
                                             <tr>
                                                 <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4">
                                                     Tiêu đề

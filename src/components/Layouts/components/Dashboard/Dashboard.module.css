@@ -1,0 +1,21 @@
+.wrapper{
+    width: 23%;
+    padding: 20px 20px 0;
+    background-color: white;
+}
+
+.user{
+    display: flex;
+    border-bottom: 3px solid rgb(202, 202, 202);
+    padding-bottom: 15px;
+}
+
+.avatar{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+}
+
+.info{
+    margin-left: 10px;
+}

@@ -21,20 +21,20 @@ function AdvertisingList({ cities, idCategory, idAd, idCity }) {
                 {!idCategory 
                 ?
                 ads.map(ad => {
-                    return <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
+                    return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
                 })
                 :
                 ads.map(ad => {
                     if(ad.idCategory === idCategory){
                         if(idAd){
                             if(ad._id !== idAd){
-                                return <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
+                                return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
                             }else return null;
                         }else if(idCity){
                             if(ad.idCity === idCity){
-                                return <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
+                                return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
                             }else return null;
-                        }else return <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
+                        }else return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
                     }else return null;
                 })
                 }

@@ -47,7 +47,7 @@ function Category() {
     return (
         <>
             <div className={styles.title}>
-                <h2 className='text-base'><Link to='/' className='text-teal-500 hover:text-teal-700'>Trang chủ</Link> | {category}</h2>
+                <h2 className='text-sm'><Link to='/' className='text-teal-500 hover:text-teal-700'>Trang chủ</Link> / {category}</h2>
             </div>
             <div className={styles.filter}>
                 <div onClick={() => {setHidden(!hidden)}} className={styles.type}>

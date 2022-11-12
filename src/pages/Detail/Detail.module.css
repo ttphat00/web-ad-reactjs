@@ -1,22 +1,26 @@
 .category{
-    border-bottom: 1px dotted #cacaca;
     padding-bottom: 10px;
+    padding-left: 20px;
 }
 
 .content{
     display: flex;
-    margin-top: 20px;
+    background-color: white
 }
 
 .detail{
     width: 65%;
-    border-right: 1px dotted #cacaca;
-    padding-right: 45px;
+    border-right: 1px solid #f2f5f8;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 20px;
     box-sizing: content-box;
 }
 
 .slider{
     height: var(--lg-ad-image-height);
+    background-color: #eee;
 }
 
 .image{
@@ -61,12 +65,17 @@
 
 .description{
     padding: 20px 0;
-    border-top: 1px dotted #cacaca;
+    border-top: 1px solid #f2f5f8;
+    padding-left: 20px;
     /* line-height: 30px; */
 }
 
 .contact{
-    width: 30%;
+    flex: 1;
+    height: max-content;
+    padding-bottom: 20px;
+    margin-top: 10px;
+    /* background-color: #FFF7F4; */
 }
 
 .host{
@@ -89,7 +98,7 @@
 }
 
 .phone{
-    width: 280px;
+    width: 240px;
     height: 40px;
     border-radius: 5px;
     border: 1px solid var(--primary);
@@ -102,6 +111,19 @@
     cursor: pointer;
 }
 
+.email{
+    width: 240px;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid var(--primary);
+    margin: 20px 0 0 20px;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+}
+
 .related{
-    margin: 40px 0 0;
+    margin-top: 10px;
+    background-color: white;
+    padding: 10px 20px 20px 20px;
 }

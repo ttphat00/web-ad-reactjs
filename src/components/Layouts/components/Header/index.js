@@ -5,12 +5,13 @@ import { FaUserCircle } from "react-icons/fa";
 import { FaRegEdit } from "react-icons/fa";
 import { FaCaretDown } from "react-icons/fa";
 import { FaSignOutAlt } from "react-icons/fa";
+import { FaBell } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { apiURL, authorization } from '../../../../config';
 
-function Header() {
+function Header({ handleSetUser }) {
     let navigate = useNavigate();
     const [show, setShow] = useState(false);
     const [logedIn, setLogedIn] = useState(false);
@@ -45,6 +46,9 @@ function Header() {
                 .then(res => {
                     // console.log(res.data);
                     setUser(res.data);
+                    if(handleSetUser){
+                        handleSetUser(res.data);
+                    }
                 })
                 .catch(err => console.log(err))
         }
@@ -57,7 +61,7 @@ function Header() {
                     <Link to='/'><img className='w-full h-full object-contain' src={logo} alt='' /></Link>
                 </div>
                 <div className={styles.search}>
-                    <div className="flex basis-full justify-center">
+                    <div className={`flex basis-full ${logedIn ? 'justify-evenly' : 'justify-center'}`}>
                         <div className="xl:w-3/4">
                             <div className="input-group relative flex flex-wrap items-stretch w-full">
                                 <input type="search" className="form-control relative flex-auto min-w-0 block w-full pl-3 pr-16 py-1.5 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-full transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:outline-none" placeholder="Nhập từ khóa cần tìm kiếm..." aria-label="Search" aria-describedby="button-addon2" />
@@ -68,6 +72,11 @@ function Header() {
                                 </button>
                             </div>
                         </div>
+                        {logedIn && 
+                        <div className="flex items-center bg-gray-100 rounded-full px-2">
+                            <FaBell className='text-teal-500 text-lg cursor-pointer'/>
+                        </div>
+                        }
                     </div>
                 </div>
                 <div className={styles.login}>
@@ -82,8 +91,8 @@ function Header() {
                         <div className={`${styles.dropdown} w-max shadow bg-white absolute top-[55px] right-0 px-4 py-2 hidden`}>
                             <ul>
                                 <li className='py-1'><Link to='' className='hover:text-teal-500'>Thông tin tài khoản</Link></li>
-                                <li className='py-1'><Link to='' className='hover:text-teal-500'>Quản lý tin đăng</Link></li>
-                                <li className='py-1'><Link to='' className='hover:text-teal-500'>Lịch sử giao dịch</Link></li>
+                                <li className='py-1'><Link to='/user/quan-ly-tin' className='hover:text-teal-500'>Quản lý tin đăng</Link></li>
+                                <li className='py-1'><Link to='/user/lich-su-giao-dich' className='hover:text-teal-500'>Lịch sử giao dịch</Link></li>
                                 <li className='py-1'><Link to='' className='hover:text-teal-500'>Tin đã lưu</Link></li>
                                 <li className='py-1'>
                                     <div onClick={handleSignOut} className='hover:text-teal-500'>

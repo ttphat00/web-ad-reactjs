@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import styles from './PopupLogin.module.css';
 import { FaWindowClose } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
 import { useState } from 'react';
 import clsx from 'clsx';
 import axios from 'axios';
@@ -12,6 +14,7 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
     const [showSuccessNotification, setShowSuccessNotification] = useState(false);
     const [showErrorNotification, setShowErrorNotification] = useState(false);
     const [form, setForm] = useState('signin');
+    const [toggle, setToggle] = useState(true);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -20,6 +23,7 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
         setForm('signin');
         setEmail('');
         setPassword('');
+        setToggle(true);
     }
 
     const handleShowSignUp = () => {
@@ -27,6 +31,11 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
         setEmail('');
         setPassword('');
         setName('');
+        setToggle(true);
+    }
+
+    const handleTogglePassword = () => {
+        setToggle(!toggle);
     }
 
     const handleChangeName = (e) => {
@@ -154,11 +163,17 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
                             </label>
                             <input value={email} onChange={handleChangeEmail} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email" required />
                         </div>
-                        <div className="mb-6">
+                        <div className="mb-6 relative">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
                                 Mật khẩu
                             </label>
-                            <input value={password} onChange={handleChangePassword} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="Mật khẩu" required />
+                            <input value={password} onChange={handleChangePassword} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type={toggle ? 'password' : 'text'} placeholder="Mật khẩu" required />
+                            {toggle
+                            ?
+                            <FaEye onClick={handleTogglePassword} className='absolute right-[8px] bottom-[21px] text-lg text-teal-500 cursor-pointer'/>
+                            :
+                            <FaEyeSlash onClick={handleTogglePassword} className='absolute right-[8px] bottom-[21px] text-lg text-teal-500 cursor-pointer'/>
+                            }
                         </div>
                         <div className="flex items-center justify-between">
                             <button onClick={handleSignUp} className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="button">
@@ -177,11 +192,17 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
                                 </label>
                                 <input value={email} onChange={handleChangeEmail} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email" required />
                             </div>
-                            <div className="mb-6">
+                            <div className="mb-6 relative">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
                                     Mật khẩu
                                 </label>
-                                <input value={password} onChange={handleChangePassword} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="Mật khẩu" required />
+                                <input value={password} onChange={handleChangePassword} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type={toggle ? 'password' : 'text'} placeholder="Mật khẩu" required />
+                                {toggle
+                                ?
+                                <FaEye onClick={handleTogglePassword} className='absolute right-[8px] bottom-[21px] text-lg text-teal-500 cursor-pointer'/>
+                                :
+                                <FaEyeSlash onClick={handleTogglePassword} className='absolute right-[8px] bottom-[21px] text-lg text-teal-500 cursor-pointer'/>
+                                }
                             </div>
                             <div className="flex items-center justify-between">
                                 <button onClick={handleSignIn} className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-[60%]" type="button">
