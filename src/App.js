@@ -5,6 +5,7 @@ import { publicRoutes } from './routes'
 
 function App() {
   const [ page, setPage ] = useState();
+  const [ changeAvatar, setChangeAvatar ] = useState(false);
 
   return (
     <BrowserRouter>
@@ -21,7 +22,7 @@ function App() {
               Layout = Fragment;
             }
 
-            return <Route key={index} path={route.path} element={<Layout page={page}><Page handleSetPage={setPage} /></Layout>} />
+            return <Route key={index} path={route.path} element={<Layout changeAvatar={changeAvatar} page={page}><Page handleSetPage={setPage} changeAvatar={setChangeAvatar} /></Layout>} />
           })}
         </Routes>
       </div>

@@ -52,10 +52,15 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
 
     const handleSignUp = async () => {
         try {
+            const createdAt = new Date();
+            
+            createdAt.setHours(createdAt.getHours() + 7);
+            
             const res = await axios.post(`${apiURL}auth/register`, {
                 name,
                 email,
-                password
+                password,
+                createdAt
             });
 
             console.log(res.data);

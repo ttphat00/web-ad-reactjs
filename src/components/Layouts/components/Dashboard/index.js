@@ -15,7 +15,7 @@ function Dashboard({ page, user }) {
                         {user.name}
                     </div>
                     <div className='text-sm text-gray-500'>
-                        <Link to='' className='hover:text-teal-700'>Chỉnh sửa tài khoản</Link>
+                        <Link to='/user/cap-nhat-tai-khoan' className='hover:text-teal-700'>Chỉnh sửa tài khoản</Link>
                     </div>
                     <div className='text-sm mt-1'>
                         <FaCoins className='inline text-yellow-500 mr-1'/>
@@ -27,9 +27,9 @@ function Dashboard({ page, user }) {
                 <ul>
                     <li className='py-3 text-sm border-b-[1px] border-solid text-gray-500'>
                         <Link className={clsx({
-                            'text-teal-500': page === '',
-                            'font-bold': page === ''
-                        })} to=''>
+                            'text-teal-500': page === 'Thông tin tài khoản',
+                            'font-bold': page === 'Thông tin tài khoản'
+                        })} to='/user/tai-khoan'>
                             Thông tin tài khoản
                         </Link>
                     </li>

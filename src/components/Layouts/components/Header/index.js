@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { apiURL, authorization } from '../../../../config';
 
-function Header({ handleSetUser }) {
+function Header({ changeAvatar, handleSetUser }) {
     let navigate = useNavigate();
     const [show, setShow] = useState(false);
     const [logedIn, setLogedIn] = useState(false);
@@ -52,7 +52,7 @@ function Header({ handleSetUser }) {
                 })
                 .catch(err => console.log(err))
         }
-    }, [logedIn])
+    }, [logedIn, changeAvatar])
 
     return (
         <header className={styles.wrapper}>
@@ -90,7 +90,7 @@ function Header({ handleSetUser }) {
                         <FaCaretDown className='ml-1'/>
                         <div className={`${styles.dropdown} w-max shadow bg-white absolute top-[55px] right-0 px-4 py-2 hidden`}>
                             <ul>
-                                <li className='py-1'><Link to='' className='hover:text-teal-500'>Thông tin tài khoản</Link></li>
+                                <li className='py-1'><Link to='/user/tai-khoan' className='hover:text-teal-500'>Thông tin tài khoản</Link></li>
                                 <li className='py-1'><Link to='/user/quan-ly-tin' className='hover:text-teal-500'>Quản lý tin đăng</Link></li>
                                 <li className='py-1'><Link to='/user/lich-su-giao-dich' className='hover:text-teal-500'>Lịch sử giao dịch</Link></li>
                                 <li className='py-1'><Link to='' className='hover:text-teal-500'>Tin đã lưu</Link></li>

@@ -119,8 +119,8 @@ function Post() {
             const expireDate = new Date();
             
             today.setHours(today.getHours() + 7);
-            expireDate.setDate(today.getDate() + parseInt(duration));
             expireDate.setHours(expireDate.getHours() + 7);
+            expireDate.setDate(today.getDate() + parseInt(duration));
             
             const uploadData = new FormData();
 

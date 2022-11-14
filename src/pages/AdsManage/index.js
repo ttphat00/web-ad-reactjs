@@ -37,6 +37,36 @@ const columns = [
     },
 ];
 
+const columns2 = [
+    {
+        name: '',
+        selector: row => row.image,
+        width: '100px',
+    },
+    {
+        name: 'Tiêu đề',
+        selector: row => row.title,
+        sortable: true,
+        width: '250px',
+    },
+    {
+        name: 'Ngày cập nhật',
+        selector: row => row.createdAt,
+        sortable: true,
+        width: '160px',
+    },
+    {
+        name: 'Lý do',
+        selector: row => row.reason,
+        width: '190px',
+    },
+    {
+        name: '',
+        selector: row => row.manage,
+        width: '100px',
+    },
+];
+
 // const data = [];
 
 const paginationComponentOptions = {
@@ -49,39 +79,76 @@ const paginationComponentOptions = {
 function AdsManage({ handleSetPage }) {
     const [ tab, setTab ] = useState('Tin đang rao');
     const [ ads, setAds ] = useState([]);
+    const [ orders, setOrders ] = useState([]);
     const [ user, setUser ] = useState({});
 
     //Data table
     const [ data, setData ] = useState([]);
 
     //Filtering table*******************
-    const [filterText, setFilterText] = useState('');
+    // const [filterText, setFilterText] = useState('');
+    const [dateFrom, setDateFrom] = useState('');
+    const [dateTo, setDateTo] = useState('');
 	const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
 	const filteredItems = data.filter(
-		item => item.title && item.title.toLowerCase().includes(filterText.toLowerCase()),
+		item => {
+            // item.title && item.title.toLowerCase().includes(filterText.toLowerCase())
+            if(dateFrom && dateTo){
+                const from = new Date(dateFrom);
+                const to = new Date(dateTo);
+                const createdAt = new Date(item.createdAt);
+                return from <= createdAt && createdAt <= to;
+            }else return true;
+        },
 	);
 
     const subHeaderComponentMemo = useMemo(() => {
 		const handleClear = () => {
-			if (filterText) {
+			if (dateFrom || dateTo) {
 				setResetPaginationToggle(!resetPaginationToggle);
-				setFilterText('');
+				// setFilterText('');
+                setDateFrom('');
+                setDateTo('');
 			}
 		};
 
 		return (
-			<div className="relative w-[33%] mt-[10px]">
-                <input 
-                className="w-full text-sm appearance-none border rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
-                type='text' 
-                placeholder="Lọc theo tiêu đề" 
-                onChange={e => setFilterText(e.target.value)} 
-                value={filterText} 
-                />
-                <FaWindowClose onClick={handleClear} className="absolute top-[2px] right-0 text-2xl rounded text-teal-500 cursor-pointer" />
+			// <div className="relative w-[33%] mt-[10px]">
+            //     <input 
+            //     className="w-full text-sm appearance-none border rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+            //     type='text' 
+            //     placeholder="Lọc theo tiêu đề" 
+            //     onChange={e => setFilterText(e.target.value)} 
+            //     value={filterText} 
+            //     />
+            //     <FaWindowClose onClick={handleClear} className="absolute top-[2px] right-0 text-2xl rounded text-teal-500 cursor-pointer" />
+            // </div>
+            <div className="w-[72%] mt-[10px] flex justify-between">
+                <div className="text-sm flex items-center">Lọc theo ngày cập nhật:</div>
+                <div className="flex">
+                    <label className="text-sm flex items-center mr-2">Từ</label>
+                    <input 
+                    className="w-full text-sm appearance-none border rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                    type='date' 
+                    onChange={e => setDateFrom(e.target.value)} 
+                    value={dateFrom} 
+                    />
+                </div>
+                <div className="flex">
+                    <label className="text-sm flex items-center mr-2">đến</label>
+                    <input 
+                    className="w-full text-sm appearance-none border rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                    type='date' 
+                    onChange={e => setDateTo(e.target.value)} 
+                    value={dateTo} 
+                    />
+                </div>
+                <div className="flex items-center">
+                    <FaWindowClose onClick={handleClear} className="text-2xl rounded text-teal-500 cursor-pointer" />
+                </div>
             </div>
 		);
-	}, [filterText, resetPaginationToggle]);
+	}, [dateFrom, dateTo, resetPaginationToggle]);
     //*******************Filtering table
 
     useEffect(() => {
@@ -91,12 +158,20 @@ function AdsManage({ handleSetPage }) {
     const formatTime = (time) => {
         const createdDate = new Date(time);
         createdDate.setHours(createdDate.getHours() - 7);
-        const date = createdDate.getDate();
-        const month = createdDate.getMonth() + 1;
+        
+        let date = createdDate.getDate();
+        if(date < 10){
+            date = `0${date}`;
+        }
+
+        let month = createdDate.getMonth() + 1;
+        if(month < 10){
+            month = `0${month}`;
+        }
+
         const year = createdDate.getFullYear();
-        const hour = createdDate.getHours();
-        const minute = createdDate.getMinutes();
-        return `${date}/${month}/${year} - ${hour}:${minute}`;
+
+        return `${year}-${month}-${date}`;
     }
 
     useEffect(() => {
@@ -112,6 +187,12 @@ function AdsManage({ handleSetPage }) {
     }, [])
 
     useEffect(() => {
+        axios.get(`${apiURL}orders`)
+            .then(res => setOrders(res.data))
+            .catch(err => console.log(err))
+    }, [])
+
+    useEffect(() => {
         const arr = [];
 
         if(tab==='Tin đang rao'){
@@ -120,7 +201,7 @@ function AdsManage({ handleSetPage }) {
                     const row = {
                         id: ad._id,
                         image: <Link to={`/chi-tiet/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                        title: ad.title,
+                        title: <Link className="hover:text-teal-700" to={`/chi-tiet/${ad.title}`}>{ad.title}</Link>,
                         createdAt: formatTime(ad.createdAt),
                         expireDate: formatTime(ad.expireDate),
                         manage: <div className="flex text-teal-500">
@@ -139,8 +220,8 @@ function AdsManage({ handleSetPage }) {
                 if(ad.idCustomer===user._id && expireDate<today){
                     const row = {
                         id: ad._id,
-                        image: <Link to=''><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                        title: ad.title,
+                        image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                        title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
                         createdAt: formatTime(ad.createdAt),
                         expireDate: formatTime(ad.expireDate),
                         manage: <div className="flex text-teal-500">
@@ -151,7 +232,47 @@ function AdsManage({ handleSetPage }) {
                     arr.push(row);
                 }
             });
-        }
+        }else if(tab==='Tin chờ duyệt'){
+            orders.map(order => {
+                if(order.idCustomer===user._id && order.status==='Đang chờ xác nhận'){
+                    ads.map(ad => {
+                        if(ad._id===order.adDetails[0].idAd){
+                            const row = {
+                                id: ad._id,
+                                image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                                title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
+                                createdAt: formatTime(ad.createdAt),
+                                expireDate: formatTime(ad.expireDate),
+                                manage: <div className="flex text-teal-500">
+                                    <Link to='' className="mr-3 hover:text-teal-700">Sửa</Link>
+                                    <div className="cursor-pointer hover:text-teal-700">Xóa</div>
+                                </div>,
+                            }
+                            arr.push(row);
+                        }
+                    });
+                }
+            });
+        }else orders.map(order => {
+            if(order.idCustomer===user._id && order.status==='Bị từ chối'){
+                ads.map(ad => {
+                    if(ad._id===order.adDetails[0].idAd){
+                        const row = {
+                            id: ad._id,
+                            image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                            title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
+                            createdAt: formatTime(ad.createdAt),
+                            reason: <div className="text-red-500 font-medium">Nội dung không phù hợp</div>,
+                            manage: <div className="flex text-teal-500">
+                                <Link to='' className="mr-3 hover:text-teal-700">Sửa</Link>
+                                <div className="cursor-pointer hover:text-teal-700">Xóa</div>
+                            </div>,
+                        }
+                        arr.push(row);
+                    }
+                });
+            }
+        });
 
         setData(arr);
 
@@ -194,6 +315,19 @@ function AdsManage({ handleSetPage }) {
                 </div>
             </div>
             <div>
+                {tab==='Tin bị từ chối'
+                ?
+                <DataTable
+                    columns={columns2}
+                    data={filteredItems}
+                    pagination
+                    paginationComponentOptions={paginationComponentOptions}
+                    paginationResetDefaultPage={resetPaginationToggle}
+                    subHeader
+                    subHeaderComponent={subHeaderComponentMemo}
+                    persistTableHead
+                />
+                :
                 <DataTable
                     columns={columns}
                     data={filteredItems}
@@ -204,6 +338,7 @@ function AdsManage({ handleSetPage }) {
                     subHeaderComponent={subHeaderComponentMemo}
                     persistTableHead
                 />
+                }
             </div>
         </div>
     );

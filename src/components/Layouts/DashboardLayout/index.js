@@ -6,7 +6,7 @@ import { FaArrowUp } from 'react-icons/fa';
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 
-function DashboardLayout({ page, children }) {
+function DashboardLayout({ changeAvatar, page, children }) {
     const [show, setShow] = useState(true);
     const [user, setUser] = useState({});
 
@@ -32,7 +32,7 @@ function DashboardLayout({ page, children }) {
 
     return (  
         <>
-            <Header handleSetUser={setUser}/>
+            <Header changeAvatar={changeAvatar} handleSetUser={setUser}/>
             <div className={styles.container}>
                 <Dashboard page={page} user={user}/>
                 <div className={styles.content}>
