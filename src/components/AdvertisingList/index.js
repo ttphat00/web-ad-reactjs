@@ -4,13 +4,16 @@ import Advertising from '../Advertising';
 import axios from 'axios';
 import { apiURL } from '../../config';
 
-function AdvertisingList({ cities, idCategory, idAd, idCity }) {
-    const [ ads, setAds] = useState([]);
+function AdvertisingList({ cities, idCategory, idAd, idCity, status }) {
+    const [ newAds, setNewAds] = useState([]);
+    const [ oldAds, setOldAds] = useState([]);
 
     useEffect(() => {
         axios.get(`${apiURL}ads`)
             .then(res => {
-                setAds(res.data);
+                setOldAds(res.data);
+                const arr = [...res.data].reverse();
+                setNewAds(arr);
             })
             .catch(err => console.log(err))
     }, [])
@@ -18,13 +21,49 @@ function AdvertisingList({ cities, idCategory, idAd, idCity }) {
     return ( 
         <div className={styles.list}>
             <ul className='flex flex-wrap'>
-                {!idCategory 
+
+                {!idCategory && newAds.map(ad => {
+                    return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
+                })
+                }
+
+                {idCategory && idAd && newAds.map(ad => {
+                    if(ad.idCategory === idCategory && ad._id !== idAd){
+                        return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
+                    }else return null;
+                })}
+
+                {idCategory && idCity && status==='Tin mới nhất' && newAds.map(ad => {
+                    if(ad.idCategory === idCategory && ad.idCity === idCity){
+                        return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
+                    }else return null;
+                })}
+
+                {idCategory && idCity && status==='Tin cũ nhất' && oldAds.map(ad => {
+                    if(ad.idCategory === idCategory && ad.idCity === idCity){
+                        return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
+                    }else return null;
+                })}
+
+                {idCategory && !idCity && status==='Tin mới nhất' && newAds.map(ad => {
+                    if(ad.idCategory === idCategory){
+                        return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
+                    }else return null;
+                })}
+
+                {idCategory && !idCity && status==='Tin cũ nhất' && oldAds.map(ad => {
+                    if(ad.idCategory === idCategory){
+                        return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
+                    }else return null;
+                })}
+
+                {/* {!idCategory 
                 ?
-                ads.map(ad => {
+                newAds.map(ad => {
                     return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
                 })
                 :
-                ads.map(ad => {
+                newAds.map(ad => {
                     if(ad.idCategory === idCategory){
                         if(idAd){
                             if(ad._id !== idAd){
@@ -37,7 +76,8 @@ function AdvertisingList({ cities, idCategory, idAd, idCity }) {
                         }else return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
                     }else return null;
                 })
-                }
+                } */}
+
             </ul>
         </div>
     );

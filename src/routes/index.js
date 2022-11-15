@@ -10,6 +10,7 @@ import AdsManage from '../pages/AdsManage';
 import TransactionHistory from '../pages/TransactionHistory';
 import AccountInfo from '../pages/AccountInfo';
 import UpdatingAccount from '../pages/UpdatingAccount';
+import UpdatingAd from '../pages/UpdatingAd';
 import DashboardLayout from '../components/Layouts/DashboardLayout';
 
 const publicRoutes = [
@@ -24,6 +25,7 @@ const publicRoutes = [
     { path: '/user/lich-su-giao-dich', component: TransactionHistory, layout: DashboardLayout },
     { path: '/user/tai-khoan', component: AccountInfo, layout: DashboardLayout },
     { path: '/user/cap-nhat-tai-khoan', component: UpdatingAccount, layout: DashboardLayout },
+    { path: '/user/cap-nhat-tin/:idAd', component: UpdatingAd },
     { path: '*', component: NotFound },
 ];
 

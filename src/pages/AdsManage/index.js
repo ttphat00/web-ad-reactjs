@@ -5,6 +5,8 @@ import DataTable from 'react-data-table-component';
 import { FaWindowClose } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { apiURL, authorization } from "../../config";
+import ErrorNotification from "../../components/Notification/ErrorNotification";
+import SuccessNotification from "../../components/Notification/SuccessNotification";
 
 const columns = [
     {
@@ -77,6 +79,8 @@ const paginationComponentOptions = {
 };
 
 function AdsManage({ handleSetPage }) {
+    const [showErrorNotification, setShowErrorNotification] = useState(false);
+    const [showSuccessNotification, setShowSuccessNotification] = useState(false);
     const [ tab, setTab ] = useState('Tin đang rao');
     const [ ads, setAds ] = useState([]);
     const [ orders, setOrders ] = useState([]);
@@ -174,6 +178,73 @@ function AdsManage({ handleSetPage }) {
         return `${year}-${month}-${date}`;
     }
 
+    const handleDeleteAd = async (idAd, idOrder) => {
+        const confirm = window.confirm('Bạn có chắc chắn muốn xóa tin quảng cáo này?');
+        
+        if(confirm){
+            try {
+                const uploadData = new FormData();
+
+                uploadData.append("display", false);
+
+                const res1 = await axios.put(`${apiURL}ads/${idAd}`, uploadData);
+                console.log('An tin');
+
+                const res2 = await axios.put(`${apiURL}orders/${idOrder}`, {
+                    status: 'Tin đã xóa',
+                });
+                console.log('Thay doi trang thai thanh Tin bi xoa');
+
+                setShowSuccessNotification(true);
+
+                const arr = data.filter(ad => ad.id !== idAd);
+
+                setData(arr);
+
+                setTimeout(() => {
+                    setShowSuccessNotification(false);
+                }, 5000);
+            } catch (error) {
+                console.log(error);
+
+                setShowErrorNotification(true);
+
+                setTimeout(() => {
+                    setShowErrorNotification(false);
+                }, 5000);
+            }
+            
+            // axios.put(`${apiURL}ads/${idAd}`, uploadData)
+            //     .then(res => {
+            //         console.log('An tin');
+            //         return axios.put(`${apiURL}orders/${idOrder}`, {
+            //             status: 'Tin đã xóa',
+            //         })
+            //     })
+            //     .then(res => {
+            //         console.log('Thay doi trang thai thanh Tin bi xoa');
+                    
+            //         setShowSuccessNotification(true);
+
+            //         setData([]);
+            //         setToggleDel(!toggleDel);
+
+            //         setTimeout(() => {
+            //             setShowSuccessNotification(false);
+            //         }, 5000);
+            //     })
+            //     .catch(err => {
+            //         console.log(err);
+
+            //         setShowErrorNotification(true);
+
+            //         setTimeout(() => {
+            //             setShowErrorNotification(false);
+            //         }, 5000);
+            //     });
+        }
+    }
+
     useEffect(() => {
         axios.get(`${apiURL}customers/profile`, authorization(localStorage.getItem('token')))
             .then(res => setUser(res.data))
@@ -184,52 +255,60 @@ function AdsManage({ handleSetPage }) {
         axios.get(`${apiURL}ads`)
             .then(res => setAds(res.data))
             .catch(err => console.log(err))
-    }, [])
+    }, [data])
 
     useEffect(() => {
         axios.get(`${apiURL}orders`)
             .then(res => setOrders(res.data))
             .catch(err => console.log(err))
-    }, [])
+    }, [data])
 
     useEffect(() => {
         const arr = [];
 
         if(tab==='Tin đang rao'){
-            ads.map(ad => {
-                if(ad.idCustomer===user._id && ad.display){
-                    const row = {
-                        id: ad._id,
-                        image: <Link to={`/chi-tiet/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                        title: <Link className="hover:text-teal-700" to={`/chi-tiet/${ad.title}`}>{ad.title}</Link>,
-                        createdAt: formatTime(ad.createdAt),
-                        expireDate: formatTime(ad.expireDate),
-                        manage: <div className="flex text-teal-500">
-                            <div className="mr-3 cursor-pointer hover:text-teal-700">Gia hạn</div>
-                            <div className="cursor-pointer hover:text-teal-700">Xóa</div>
-                        </div>,
-                    }
-                    arr.push(row);
+            orders.map(order => {
+                if(order.idCustomer===user._id && order.status==='Chấp nhận'){
+                    ads.map(ad => {
+                        if(ad._id===order.adDetails[0].idAd && ad.display){
+                            const row = {
+                                id: ad._id,
+                                image: <Link to={`/chi-tiet/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                                title: <Link className="hover:text-teal-700" to={`/chi-tiet/${ad.title}`}>{ad.title}</Link>,
+                                createdAt: formatTime(ad.createdAt),
+                                expireDate: formatTime(ad.expireDate),
+                                manage: <div className="flex text-teal-500">
+                                    <div className="mr-3 cursor-pointer hover:text-teal-700">Gia hạn</div>
+                                    <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700">Xóa</div>
+                                </div>,
+                            }
+                            arr.push(row);
+                        }
+                    });
                 }
             });
         }else if(tab==='Tin hết hạn'){
-            ads.map(ad => {
-                const today = new Date();
-                const expireDate = new Date(ad.expireDate);
-                expireDate.setHours(expireDate.getHours() - 7);
-                if(ad.idCustomer===user._id && expireDate<today){
-                    const row = {
-                        id: ad._id,
-                        image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                        title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
-                        createdAt: formatTime(ad.createdAt),
-                        expireDate: formatTime(ad.expireDate),
-                        manage: <div className="flex text-teal-500">
-                            <div className="mr-3 cursor-pointer hover:text-teal-700">Gia hạn</div>
-                            <div className="cursor-pointer hover:text-teal-700">Xóa</div>
-                        </div>,
-                    }
-                    arr.push(row);
+            orders.map(order => {
+                if(order.idCustomer===user._id && order.status==='Chấp nhận'){
+                    ads.map(ad => {
+                        const today = new Date();
+                        const expireDate = new Date(ad.expireDate);
+                        expireDate.setHours(expireDate.getHours() - 7);
+                        if(ad._id===order.adDetails[0].idAd && expireDate<today){
+                            const row = {
+                                id: ad._id,
+                                image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                                title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
+                                createdAt: formatTime(ad.createdAt),
+                                expireDate: formatTime(ad.expireDate),
+                                manage: <div className="flex text-teal-500">
+                                    <div className="mr-3 cursor-pointer hover:text-teal-700">Gia hạn</div>
+                                    <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700">Xóa</div>
+                                </div>,
+                            }
+                            arr.push(row);
+                        }
+                    });
                 }
             });
         }else if(tab==='Tin chờ duyệt'){
@@ -244,8 +323,8 @@ function AdsManage({ handleSetPage }) {
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatTime(ad.expireDate),
                                 manage: <div className="flex text-teal-500">
-                                    <Link to='' className="mr-3 hover:text-teal-700">Sửa</Link>
-                                    <div className="cursor-pointer hover:text-teal-700">Xóa</div>
+                                    <Link to={`/user/cap-nhat-tin/${ad._id}`} className="mr-3 hover:text-teal-700">Sửa</Link>
+                                    <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700">Xóa</div>
                                 </div>,
                             }
                             arr.push(row);
@@ -264,8 +343,8 @@ function AdsManage({ handleSetPage }) {
                             createdAt: formatTime(ad.createdAt),
                             reason: <div className="text-red-500 font-medium">Nội dung không phù hợp</div>,
                             manage: <div className="flex text-teal-500">
-                                <Link to='' className="mr-3 hover:text-teal-700">Sửa</Link>
-                                <div className="cursor-pointer hover:text-teal-700">Xóa</div>
+                                <Link to={`/user/cap-nhat-tin/${ad._id}`} className="mr-3 hover:text-teal-700">Sửa</Link>
+                                <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700">Xóa</div>
                             </div>,
                         }
                         arr.push(row);
@@ -280,6 +359,8 @@ function AdsManage({ handleSetPage }) {
 
     return ( 
         <div>
+            {showErrorNotification && <ErrorNotification />}
+            {showSuccessNotification && <SuccessNotification />}
             <div className="flex border-b-[1px] border-gray-200 text-sm">
                 <div onClick={() => setTab('Tin đang rao')} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin đang rao',

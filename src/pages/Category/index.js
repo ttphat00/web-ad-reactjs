@@ -15,7 +15,7 @@ function Category() {
     const [ hidden2, setHidden2 ] = useState(true);
     const [ city, setCity ] = useState('');
     const [ idCity, setIdCity ] = useState('');
-    const [ status, setStatus ] = useState('');
+    const [ status, setStatus ] = useState('Tin mới nhất');
 
     useEffect(() => {
         axios.get(`${apiURL}cities`)
@@ -78,7 +78,7 @@ function Category() {
                         </ul>
                     </div>
                 </div>
-                <AdvertisingList cities={cities} idCategory={ctg._id} idCity={idCity} />
+                <AdvertisingList cities={cities} idCategory={ctg._id} idCity={idCity} status={status} />
             </div>
         </>
     )
