@@ -4,10 +4,9 @@ import { useEffect, useState, useMemo } from "react";
 import DataTable from 'react-data-table-component';
 import { FaWindowClose } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { apiURL, authorization } from "../../config";
+import { apiURL } from "../../config";
 import ErrorNotification from "../../components/Notification/ErrorNotification";
-import SuccessNotification from "../../components/Notification/SuccessNotification";
-import PopupExtend from "../../components/Popups/PopupExtend";
+// import SuccessNotification from "../../components/Notification/SuccessNotification";
 
 const columns = [
     {
@@ -19,13 +18,12 @@ const columns = [
         name: 'Tiêu đề',
         selector: row => row.title,
         sortable: true,
-        width: '250px',
     },
     {
         name: 'Ngày cập nhật',
         selector: row => row.createdAt,
         sortable: true,
-        width: '160px',
+        width: '140px',
     },
     {
         name: 'Ngày hết hạn',
@@ -36,7 +34,7 @@ const columns = [
     {
         name: '',
         selector: row => row.manage,
-        width: '130px',
+        width: '160px',
     },
 ];
 
@@ -50,7 +48,6 @@ const columns2 = [
         name: 'Tiêu đề',
         selector: row => row.title,
         sortable: true,
-        width: '250px',
     },
     {
         name: 'Ngày cập nhật',
@@ -61,7 +58,7 @@ const columns2 = [
     {
         name: 'Lý do',
         selector: row => row.reason,
-        width: '190px',
+        width: '200px',
     },
     {
         name: '',
@@ -79,15 +76,12 @@ const paginationComponentOptions = {
     selectAllRowsItemText: 'Tất cả',
 };
 
-function AdsManage({ handleSetPage }) {
-    const [showPopupExtend, setShowPopupExtend] = useState(false);
-    const [idAd, setIdAd] = useState('');
+function AdminAdsManage({ handleSetPage }) {
     const [showErrorNotification, setShowErrorNotification] = useState(false);
-    const [showSuccessNotification, setShowSuccessNotification] = useState(false);
-    const [ tab, setTab ] = useState('Tin đang rao');
+    // const [showSuccessNotification, setShowSuccessNotification] = useState(false);
+    const [ tab, setTab ] = useState('Tin chờ duyệt');
     const [ ads, setAds ] = useState([]);
     const [ orders, setOrders ] = useState([]);
-    const [ user, setUser ] = useState({});
 
     //Data table
     const [ data, setData ] = useState([]);
@@ -159,7 +153,7 @@ function AdsManage({ handleSetPage }) {
     //*******************Filtering table
 
     useEffect(() => {
-        handleSetPage('Quản lý tin đăng');
+        handleSetPage('Quản lý tin');
     }, [])
 
     const formatTime = (time) => {
@@ -210,78 +204,126 @@ function AdsManage({ handleSetPage }) {
         return `${year}-${month}-${date} - ${hour}:${minute}`;
     }
 
-    const handleDeleteAd = async (idAd, idOrder) => {
-        const confirm = window.confirm('Bạn có chắc chắn muốn xóa tin quảng cáo này?');
-        
-        if(confirm){
-            try {
-                const uploadData = new FormData();
+    const handleAcceptAd = (idAd, idOrder) => {
+        const today = new Date();
+        today.setHours(today.getHours() + 7);
 
-                uploadData.append("display", false);
-
-                const res1 = await axios.put(`${apiURL}ads/${idAd}`, uploadData);
-                console.log('An tin');
-
-                const res2 = await axios.put(`${apiURL}orders/${idOrder}`, {
-                    status: 'Tin đã xóa',
-                });
-                console.log('Thay doi trang thai thanh Tin bi xoa');
-
-                setShowSuccessNotification(true);
+        axios.put(`${apiURL}ads/extend/${idAd}`, {
+            display: true
+        })
+            .then(res => {
+                console.log('Hien tin');
+                return axios.put(`${apiURL}orders/${idOrder}`, {
+                    status: 'Chấp nhận',
+                    approvalDate: today,
+                })
+            })
+            .then(res => {
+                console.log('Thay doi trang thai thanh Chap nhan');
 
                 const arr = data.filter(ad => ad.id !== idAd);
 
                 setData(arr);
-
-                setTimeout(() => {
-                    setShowSuccessNotification(false);
-                }, 5000);
-            } catch (error) {
-                console.log(error);
+            })
+            .catch(err => {
+                console.log(err);
 
                 setShowErrorNotification(true);
 
                 setTimeout(() => {
                     setShowErrorNotification(false);
                 }, 5000);
-            }
-            
-            // axios.put(`${apiURL}ads/${idAd}`, uploadData)
-            //     .then(res => {
-            //         console.log('An tin');
-            //         return axios.put(`${apiURL}orders/${idOrder}`, {
-            //             status: 'Tin đã xóa',
-            //         })
-            //     })
-            //     .then(res => {
-            //         console.log('Thay doi trang thai thanh Tin bi xoa');
-                    
-            //         setShowSuccessNotification(true);
+            })
+    }
 
-            //         setData([]);
-            //         setToggleDel(!toggleDel);
+    const handleRefuseAd = (idAd, idOrder, idCustomer, totalCost, orderDate, cost) => {
+        const confirm = window.confirm('');
+        if(confirm){
+            const today = new Date();
+            today.setHours(today.getHours() + 7);
 
-            //         setTimeout(() => {
-            //             setShowSuccessNotification(false);
-            //         }, 5000);
-            //     })
-            //     .catch(err => {
-            //         console.log(err);
+            axios.get(`${apiURL}customers/${idCustomer}`)
+                .then(res => {
+                    const accountBalance = res.data.accountBalance;
+                    return axios.put(`${apiURL}customers/update/${idCustomer}`, {
+                        accountBalance: (accountBalance + totalCost)
+                    })
+                })
+                .then(res => {
+                    console.log('Tra tien cho khach hang');
+                    return axios.put(`${apiURL}orders/${idOrder}`, {
+                        status: 'Bị từ chối',
+                        approvalDate: today,
+                    })
+                })
+                .then(res => {
+                    console.log('Thay doi trang thai thanh Bi tu choi');
+                    return axios.post(`${apiURL}orders/admin-order`, {
+                        totalCost: totalCost,
+                        idAd: idAd,
+                        cost: cost,
+                        orderDate: new Date(orderDate),
+                        approvalDate: today,
+                        status: 'Hoàn trả tiền',
+                        idCustomer: idCustomer,
+                    })
+                })
+                .then(res => {
+                    console.log('Tao giao dich moi');
 
-            //         setShowErrorNotification(true);
+                    const arr = data.filter(ad => ad.id !== idAd);
 
-            //         setTimeout(() => {
-            //             setShowErrorNotification(false);
-            //         }, 5000);
-            //     });
+                    setData(arr);
+                })
+                .catch(err => {
+                    console.log(err);
+
+                    setShowErrorNotification(true);
+
+                    setTimeout(() => {
+                        setShowErrorNotification(false);
+                    }, 5000);
+                })
         }
     }
 
-    useEffect(() => {
-        axios.get(`${apiURL}customers/profile`, authorization(localStorage.getItem('token')))
-            .then(res => setUser(res.data))
-            .catch(err => console.log(err))
-    }, [])
+    // const handleDeleteAd = async (idAd, idOrder) => {
+    //     const confirm = window.confirm('Bạn có chắc chắn muốn xóa tin quảng cáo này?');
+        
+    //     if(confirm){
+    //         try {
+    //             const uploadData = new FormData();
+
+    //             uploadData.append("display", false);
+
+    //             const res1 = await axios.put(`${apiURL}ads/${idAd}`, uploadData);
+    //             console.log('An tin');
+
+    //             const res2 = await axios.put(`${apiURL}orders/${idOrder}`, {
+    //                 status: 'Tin đã xóa',
+    //             });
+    //             console.log('Thay doi trang thai thanh Tin bi xoa');
+
+    //             setShowSuccessNotification(true);
+
+    //             const arr = data.filter(ad => ad.id !== idAd);
+
+    //             setData(arr);
+
+    //             setTimeout(() => {
+    //                 setShowSuccessNotification(false);
+    //             }, 5000);
+    //         } catch (error) {
+    //             console.log(error);
+
+    //             setShowErrorNotification(true);
+
+    //             setTimeout(() => {
+    //                 setShowErrorNotification(false);
+    //             }, 5000);
+    //         }
+    //     }
+    // }
 
     useEffect(() => {
         axios.get(`${apiURL}ads`)
@@ -301,9 +343,9 @@ function AdsManage({ handleSetPage }) {
     useEffect(() => {
         const arr = [];
 
-        if(tab==='Tin đang rao'){
+        if(tab==='Tin đã duyệt'){
             orders.map(order => {
-                if(order.idCustomer===user._id && order.status==='Chấp nhận'){
+                if(order.status==='Chấp nhận'){
                     ads.map(ad => {
                         if(ad._id===order.adDetails[0].idAd && ad.display){
                             const row = {
@@ -312,34 +354,7 @@ function AdsManage({ handleSetPage }) {
                                 title: <Link className="hover:text-teal-700" to={`/chi-tiet/${ad.title}`}>{ad.title}</Link>,
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
-                                manage: <div className="flex text-teal-500">
-                                    <div onClick={() => {setShowPopupExtend(true); setIdAd(ad._id)}} className="mr-3 cursor-pointer hover:text-teal-700">Gia hạn</div>
-                                    <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700">Xóa</div>
-                                </div>,
-                            }
-                            arr.push(row);
-                        }
-                    });
-                }
-            });
-        }else if(tab==='Tin hết hạn'){
-            orders.map(order => {
-                if(order.idCustomer===user._id && order.status==='Chấp nhận'){
-                    ads.map(ad => {
-                        const today = new Date();
-                        const expireDate = new Date(ad.expireDate);
-                        expireDate.setHours(expireDate.getHours() - 7);
-                        if(ad._id===order.adDetails[0].idAd && expireDate<today){
-                            const row = {
-                                id: ad._id,
-                                image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                                title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
-                                createdAt: formatTime(ad.createdAt),
-                                expireDate: formatExpireTime(ad.expireDate),
-                                manage: <div className="flex text-teal-500">
-                                    <div onClick={() => {setShowPopupExtend(true); setIdAd(ad._id)}} className="mr-3 cursor-pointer hover:text-teal-700">Gia hạn</div>
-                                    <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700">Xóa</div>
-                                </div>,
+                                manage: '',
                             }
                             arr.push(row);
                         }
@@ -348,7 +363,7 @@ function AdsManage({ handleSetPage }) {
             });
         }else if(tab==='Tin chờ duyệt'){
             orders.map(order => {
-                if(order.idCustomer===user._id && order.status==='Đang chờ xác nhận'){
+                if(order.status==='Đang chờ xác nhận'){
                     ads.map(ad => {
                         if(ad._id===order.adDetails[0].idAd){
                             const row = {
@@ -358,8 +373,8 @@ function AdsManage({ handleSetPage }) {
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
                                 manage: <div className="flex text-teal-500">
-                                    <Link to={`/user/cap-nhat-tin/${ad._id}`} className="mr-3 hover:text-teal-700">Sửa</Link>
-                                    <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700">Xóa</div>
+                                    <div onClick={() => handleAcceptAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700 mr-4">Chấp nhận</div>
+                                    <div onClick={() => handleRefuseAd(ad._id, order._id, order.idCustomer, order.totalCost, order.orderDate, order.adDetails[0].cost)} className="cursor-pointer hover:text-teal-700">Từ chối</div>
                                 </div>,
                             }
                             arr.push(row);
@@ -368,7 +383,7 @@ function AdsManage({ handleSetPage }) {
                 }
             });
         }else orders.map(order => {
-            if(order.idCustomer===user._id && order.status==='Bị từ chối'){
+            if(order.status==='Bị từ chối'){
                 ads.map(ad => {
                     if(ad._id===order.adDetails[0].idAd){
                         const row = {
@@ -378,8 +393,7 @@ function AdsManage({ handleSetPage }) {
                             createdAt: formatTime(ad.createdAt),
                             reason: <div className="text-red-500 font-medium">Nội dung không phù hợp</div>,
                             manage: <div className="flex text-teal-500">
-                                <Link to={`/user/cap-nhat-tin/${ad._id}`} className="mr-3 hover:text-teal-700">Sửa</Link>
-                                <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700">Xóa</div>
+                                <div className="cursor-pointer hover:text-teal-700">Xóa</div>
                             </div>,
                         }
                         arr.push(row);
@@ -394,19 +408,10 @@ function AdsManage({ handleSetPage }) {
 
     return ( 
         <div>
-            {showPopupExtend && <PopupExtend handleShowPopupExtend={setShowPopupExtend} idAd={idAd} />}
             {showErrorNotification && <ErrorNotification />}
-            {showSuccessNotification && <SuccessNotification />}
+            {/* {showSuccessNotification && <SuccessNotification />} */}
             <div className="flex border-b-[1px] border-gray-200 text-sm">
-                <div onClick={() => setTab('Tin đang rao')} className={clsx("py-1 cursor-pointer mr-10", {
-                    'border-b-[3px]': tab === 'Tin đang rao',
-                    'border-teal-500': tab === 'Tin đang rao',
-                    'hover:text-black': tab !== 'Tin đang rao',
-                    'text-gray-500': tab !== 'Tin đang rao'
-                })}>
-                    Tin đang rao
-                </div>
-                <div onClick={() => setTab('Tin chờ duyệt')} className={clsx("py-1 cursor-pointer mr-10", {
+            <div onClick={() => setTab('Tin chờ duyệt')} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin chờ duyệt',
                     'border-teal-500': tab === 'Tin chờ duyệt',
                     'hover:text-black': tab !== 'Tin chờ duyệt',
@@ -414,13 +419,13 @@ function AdsManage({ handleSetPage }) {
                 })}>
                     Tin chờ duyệt
                 </div>
-                <div onClick={() => setTab('Tin hết hạn')} className={clsx("py-1 cursor-pointer mr-10", {
-                    'border-b-[3px]': tab === 'Tin hết hạn',
-                    'border-teal-500': tab === 'Tin hết hạn',
-                    'hover:text-black': tab !== 'Tin hết hạn',
-                    'text-gray-500': tab !== 'Tin hết hạn'
+                <div onClick={() => setTab('Tin đã duyệt')} className={clsx("py-1 cursor-pointer mr-10", {
+                    'border-b-[3px]': tab === 'Tin đã duyệt',
+                    'border-teal-500': tab === 'Tin đã duyệt',
+                    'hover:text-black': tab !== 'Tin đã duyệt',
+                    'text-gray-500': tab !== 'Tin đã duyệt'
                 })}>
-                    Tin hết hạn
+                    Tin đã duyệt
                 </div>
                 <div onClick={() => setTab('Tin bị từ chối')} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin bị từ chối',
@@ -461,4 +466,4 @@ function AdsManage({ handleSetPage }) {
     );
 }
 
-export default AdsManage;
+export default AdminAdsManage;

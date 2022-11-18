@@ -3,7 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import DataTable from 'react-data-table-component';
 import { FaWindowClose } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { apiURL, authorization } from "../../config";
+import { apiURL } from "../../config";
 
 const columns = [
     {
@@ -39,9 +39,8 @@ const paginationComponentOptions = {
     selectAllRowsItemText: 'Tất cả',
 };
 
-function TransactionHistory({ handleSetPage }) {
+function TransactionManage({ handleSetPage }) {
     const [ orders, setOrders ] = useState([]);
-    const [ user, setUser ] = useState({});
 
     //Data table
     const [ data, setData ] = useState([]);
@@ -100,7 +99,7 @@ function TransactionHistory({ handleSetPage }) {
     //*******************Filtering table
 
     useEffect(() => {
-        handleSetPage('Lịch sử giao dịch');
+        handleSetPage('Quản lý giao dịch');
     }, [])
 
     const formatTime = (time) => {
@@ -131,12 +130,6 @@ function TransactionHistory({ handleSetPage }) {
     }
 
     useEffect(() => {
-        axios.get(`${apiURL}customers/profile`, authorization(localStorage.getItem('token')))
-            .then(res => setUser(res.data))
-            .catch(err => console.log(err))
-    }, [])
-
-    useEffect(() => {
         axios.get(`${apiURL}orders`)
             .then(res => {
                 const arr = [...res.data].reverse();
@@ -149,16 +142,14 @@ function TransactionHistory({ handleSetPage }) {
         const arr = [];
 
         orders.map(order => {
-            if(order.idCustomer===user._id){
-                const row = {
-                    id: order._id,
-                    idOrder: <Link className="hover:text-teal-700" to={`/chi-tiet-giao-dich/${order._id}`}>{order._id}</Link>,
-                    type: getOrderType(order.status),
-                    orderDate: formatTime(order.orderDate),
-                    totalCost: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalCost),
-                }
-                arr.push(row);
+            const row = {
+                id: order._id,
+                idOrder: <Link className="hover:text-teal-700" to={`/chi-tiet-giao-dich/${order._id}`}>{order._id}</Link>,
+                type: getOrderType(order.status),
+                orderDate: formatTime(order.orderDate),
+                totalCost: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalCost),
             }
+            arr.push(row);
         });
 
         setData(arr);
@@ -181,4 +172,4 @@ function TransactionHistory({ handleSetPage }) {
     );
 }
 
-export default TransactionHistory;
+export default TransactionManage;

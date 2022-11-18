@@ -1,0 +1,49 @@
+.wrapper{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(57, 58, 59, 0.5);
+    z-index: 900;
+}
+
+.inner{
+    width: 450px;
+    height: 345px;
+    border-radius: 5px;
+    background-color: white;
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: showPopup linear 0.3s;
+}
+
+@keyframes showPopup {
+    from{
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
+    }
+}
+
+.title{
+    display: flex;
+    justify-content: center;
+}
+
+.signin{
+    width: 50%;
+    padding: 10px 0;
+    text-align: center;
+    position: relative;
+    font-weight: bold;
+    color: rgb(70, 70, 70);
+    border-bottom: 2px solid rgb(211, 211, 211);
+}
+
+.form{
+    position: relative;
+}

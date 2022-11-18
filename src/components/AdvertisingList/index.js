@@ -4,7 +4,7 @@ import Advertising from '../Advertising';
 import axios from 'axios';
 import { apiURL } from '../../config';
 
-function AdvertisingList({ cities, idCategory, idAd, idCity, status }) {
+function AdvertisingList({ cities, keyWord, idCategory, idAd, idCity, status }) {
     const [ newAds, setNewAds] = useState([]);
     const [ oldAds, setOldAds] = useState([]);
 
@@ -22,8 +22,15 @@ function AdvertisingList({ cities, idCategory, idAd, idCity, status }) {
         <div className={styles.list}>
             <ul className='flex flex-wrap'>
 
-                {!idCategory && newAds.map(ad => {
+                {!idCategory && !keyWord && newAds.map(ad => {
                     return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
+                })
+                }
+
+                {!idCategory && keyWord && newAds.map(ad => {
+                    if(ad.title.toLowerCase().includes(keyWord.toLowerCase())){
+                        return ad.display && <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
+                    }else return null;
                 })
                 }
 
