@@ -24,7 +24,7 @@ function Search() {
                 <h2 className='font-medium'>Từ khóa tìm kiếm: "{keyWord}"</h2>
             </div>
             <div className={styles.advertising}>
-                <AdvertisingList cities={cities} keyWord={keyWord} />
+                <AdvertisingList cities={cities} keyWord={keyWord} itemsPerPage={9} />
             </div>
         </>
     )

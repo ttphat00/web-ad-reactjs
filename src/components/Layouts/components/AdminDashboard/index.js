@@ -53,7 +53,7 @@ function AdminDashboard({ page }) {
                         <Link className={clsx({
                             'text-teal-500': page === 'Thống kê doanh thu',
                             'font-bold': page === 'Thống kê doanh thu'
-                        })} to=''>
+                        })} to='/admin/thong-ke-doanh-thu'>
                             Thống kê doanh thu
                         </Link>
                     </li>

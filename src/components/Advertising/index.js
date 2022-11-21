@@ -21,7 +21,7 @@ function Advertising({ image, title, idCity, time, cities }) {
                 </div>
                 <div className={styles.content}>
                     <div className={styles.title}>
-                        <h3 className="text-teal-700">{title}</h3>
+                        <h3 className="text-gray-700">{title}</h3>
                     </div>
                     <div className={styles.city}>
                         {cities.map(city => {

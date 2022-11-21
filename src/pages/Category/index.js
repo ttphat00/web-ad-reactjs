@@ -78,7 +78,7 @@ function Category() {
                         </ul>
                     </div>
                 </div>
-                <AdvertisingList cities={cities} idCategory={ctg._id} idCity={idCity} status={status} />
+                <AdvertisingList cities={cities} idCategory={ctg._id || 'loading'} idCity={idCity} status={status} itemsPerPage={9} />
             </div>
         </>
     )

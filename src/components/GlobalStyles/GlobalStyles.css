@@ -4,6 +4,8 @@
 
 :root{
     --primary: #14b8a6;
+    --teal-600: #0d9488;
+    --teal-700: #0f766e;
 
     --default-layout-header-height: 60px;
     --default-layout-width: 1040px;

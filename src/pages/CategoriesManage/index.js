@@ -134,9 +134,9 @@ function CategoriesManage({ handleSetPage }) {
                 id: category._id,
                 image: <img className="w-[50px] h-[50px] object-contain" src={category.image} alt='' />,
                 title: category.title,
-                manage: <div className="flex text-teal-500">
-                    <div className="cursor-pointer mr-3 hover:text-teal-700">Sửa</div>
-                    <div className="cursor-pointer hover:text-teal-700">Xóa</div>
+                manage: <div className="flex">
+                    <div className="cursor-pointer mr-3 text-blue-500 hover:text-blue-700">Sửa</div>
+                    <div className="cursor-pointer text-red-500 hover:text-red-700">Xóa</div>
                 </div>,
             }
             arr.push(row);

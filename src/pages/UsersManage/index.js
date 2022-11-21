@@ -157,10 +157,10 @@ function UsersManage({ handleSetPage }) {
             const row = {
                 id: user._id,
                 avatar: <img className="cursor-pointer w-[50px] h-[50px] rounded-full object-cover" onClick={() => {setShowPopupUserInfo(true); setIdUser(user._id)}} src={user.avatar} alt='' />,
-                name: <div className="cursor-pointer hover:text-teal-500" onClick={() => {setShowPopupUserInfo(true); setIdUser(user._id)}}>{user.name}</div>,
+                name: <div className="cursor-pointer hover:text-teal-700" onClick={() => {setShowPopupUserInfo(true); setIdUser(user._id)}}>{user.name}</div>,
                 email: user.email,
                 createdAt: formatTime(user.createdAt),
-                manage: <div className="text-teal-500 cursor-pointer hover:text-teal-700">Xóa</div>,
+                manage: <div className="text-red-500 cursor-pointer hover:text-red-700">Xóa</div>,
             }
             arr.push(row);
         });

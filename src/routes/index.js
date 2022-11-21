@@ -13,6 +13,7 @@ import UpdatingAccount from '../pages/UpdatingAccount';
 import UpdatingAd from '../pages/UpdatingAd';
 import ExtendedAdPayment from '../pages/ExtendedAdPayment';
 import Search from '../pages/Search';
+import SavedAdsManage from '../pages/SavedAdsManage';
 import DashboardLayout from '../components/Layouts/DashboardLayout';
 import AdminLayout from '../components/Layouts/AdminLayout';
 import UsersManage from '../pages/UsersManage';
@@ -20,6 +21,7 @@ import CategoriesManage from '../pages/CategoriesManage';
 import TransactionManage from '../pages/TransactionManage';
 import AdminAdsManage from '../pages/AdminAdsManage';
 import AdminLogin from '../pages/AdminLogin';
+import RevenueStatistics from '../pages/RevenueStatistics';
 import NullLayout from '../components/Layouts/NullLayout';
 
 const publicRoutes = [
@@ -36,12 +38,14 @@ const publicRoutes = [
     { path: '/user/lich-su-giao-dich', component: TransactionHistory, layout: DashboardLayout },
     { path: '/user/tai-khoan', component: AccountInfo, layout: DashboardLayout },
     { path: '/user/cap-nhat-tai-khoan', component: UpdatingAccount, layout: DashboardLayout },
+    { path: '/user/tin-da-luu', component: SavedAdsManage, layout: DashboardLayout },
     { path: '/user/cap-nhat-tin/:idAd', component: UpdatingAd },
     { path: '/admin/dang-nhap', component: AdminLogin, layout: NullLayout },
     { path: '/admin/quan-ly-nguoi-dung', component: UsersManage, layout: AdminLayout },
     { path: '/admin/quan-ly-danh-muc', component: CategoriesManage, layout: AdminLayout },
     { path: '/admin/quan-ly-giao-dich', component: TransactionManage, layout: AdminLayout },
     { path: '/admin/quan-ly-tin', component: AdminAdsManage, layout: AdminLayout },
+    { path: '/admin/thong-ke-doanh-thu', component: RevenueStatistics, layout: AdminLayout },
     { path: '*', component: NotFound },
 ];
 

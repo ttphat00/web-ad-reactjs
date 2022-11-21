@@ -242,20 +242,24 @@ function AdminAdsManage({ handleSetPage }) {
             const today = new Date();
             today.setHours(today.getHours() + 7);
 
-            axios.get(`${apiURL}customers/${idCustomer}`)
-                .then(res => {
-                    const accountBalance = res.data.accountBalance;
-                    return axios.put(`${apiURL}customers/update/${idCustomer}`, {
-                        accountBalance: (accountBalance + totalCost)
-                    })
-                })
-                .then(res => {
-                    console.log('Tra tien cho khach hang');
-                    return axios.put(`${apiURL}orders/${idOrder}`, {
-                        status: 'Bị từ chối',
-                        approvalDate: today,
-                    })
-                })
+            // axios.get(`${apiURL}customers/${idCustomer}`)
+            //     .then(res => {
+            //         const accountBalance = res.data.accountBalance;
+            //         return axios.put(`${apiURL}customers/update/${idCustomer}`, {
+            //             accountBalance: (accountBalance + totalCost)
+            //         })
+            //     })
+            //     .then(res => {
+            //         console.log('Tra tien cho khach hang');
+            //         return axios.put(`${apiURL}orders/${idOrder}`, {
+            //             status: 'Bị từ chối',
+            //             approvalDate: today,
+            //         })
+            //     })
+            axios.put(`${apiURL}orders/${idOrder}`, {
+                status: 'Bị từ chối',
+                approvalDate: today,
+            })
                 .then(res => {
                     console.log('Thay doi trang thai thanh Bi tu choi');
                     return axios.post(`${apiURL}orders/admin-order`, {
@@ -372,9 +376,9 @@ function AdminAdsManage({ handleSetPage }) {
                                 title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
-                                manage: <div className="flex text-teal-500">
-                                    <div onClick={() => handleAcceptAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700 mr-4">Chấp nhận</div>
-                                    <div onClick={() => handleRefuseAd(ad._id, order._id, order.idCustomer, order.totalCost, order.orderDate, order.adDetails[0].cost)} className="cursor-pointer hover:text-teal-700">Từ chối</div>
+                                manage: <div className="flex">
+                                    <div onClick={() => handleAcceptAd(ad._id, order._id)} className="cursor-pointer text-teal-500 hover:text-teal-700 mr-4">Chấp nhận</div>
+                                    <div onClick={() => handleRefuseAd(ad._id, order._id, order.idCustomer, order.totalCost, order.orderDate, order.adDetails[0].cost)} className="cursor-pointer text-red-500 hover:text-red-700">Từ chối</div>
                                 </div>,
                             }
                             arr.push(row);
@@ -391,9 +395,9 @@ function AdminAdsManage({ handleSetPage }) {
                             image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
                             title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
                             createdAt: formatTime(ad.createdAt),
-                            reason: <div className="text-red-500 font-medium">Nội dung không phù hợp</div>,
-                            manage: <div className="flex text-teal-500">
-                                <div className="cursor-pointer hover:text-teal-700">Xóa</div>
+                            reason: <div className="text-yellow-700">Nội dung không phù hợp</div>,
+                            manage: <div className="flex text-red-500">
+                                <div className="cursor-pointer hover:text-red-700">Xóa</div>
                             </div>,
                         }
                         arr.push(row);

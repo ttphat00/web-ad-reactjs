@@ -312,9 +312,9 @@ function AdsManage({ handleSetPage }) {
                                 title: <Link className="hover:text-teal-700" to={`/chi-tiet/${ad.title}`}>{ad.title}</Link>,
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
-                                manage: <div className="flex text-teal-500">
-                                    <div onClick={() => {setShowPopupExtend(true); setIdAd(ad._id)}} className="mr-3 cursor-pointer hover:text-teal-700">Gia hạn</div>
-                                    <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700">Xóa</div>
+                                manage: <div className="flex">
+                                    <div onClick={() => {setShowPopupExtend(true); setIdAd(ad._id)}} className="mr-3 cursor-pointer text-yellow-700 hover:text-yellow-900">Gia hạn</div>
+                                    <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer text-red-500 hover:text-red-700">Xóa</div>
                                 </div>,
                             }
                             arr.push(row);
@@ -337,8 +337,8 @@ function AdsManage({ handleSetPage }) {
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
                                 manage: <div className="flex text-teal-500">
-                                    <div onClick={() => {setShowPopupExtend(true); setIdAd(ad._id)}} className="mr-3 cursor-pointer hover:text-teal-700">Gia hạn</div>
-                                    <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700">Xóa</div>
+                                    <div onClick={() => {setShowPopupExtend(true); setIdAd(ad._id)}} className="mr-3 cursor-pointer text-yellow-700 hover:text-yellow-900">Gia hạn</div>
+                                    <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer text-red-500 hover:text-red-700">Xóa</div>
                                 </div>,
                             }
                             arr.push(row);
@@ -358,8 +358,8 @@ function AdsManage({ handleSetPage }) {
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
                                 manage: <div className="flex text-teal-500">
-                                    <Link to={`/user/cap-nhat-tin/${ad._id}`} className="mr-3 hover:text-teal-700">Sửa</Link>
-                                    <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700">Xóa</div>
+                                    <Link to={`/user/cap-nhat-tin/${ad._id}`} className="mr-3 text-blue-500 hover:text-blue-700">Sửa</Link>
+                                    <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer text-red-500 hover:text-red-700">Xóa</div>
                                 </div>,
                             }
                             arr.push(row);
@@ -376,10 +376,10 @@ function AdsManage({ handleSetPage }) {
                             image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
                             title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
                             createdAt: formatTime(ad.createdAt),
-                            reason: <div className="text-red-500 font-medium">Nội dung không phù hợp</div>,
-                            manage: <div className="flex text-teal-500">
-                                <Link to={`/user/cap-nhat-tin/${ad._id}`} className="mr-3 hover:text-teal-700">Sửa</Link>
-                                <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer hover:text-teal-700">Xóa</div>
+                            reason: <div className="text-yellow-700">Nội dung không phù hợp</div>,
+                            manage: <div className="flex">
+                                <Link to={`/user/cap-nhat-tin/${ad._id}`} className="mr-3 text-blue-500 hover:text-blue-700">Sửa</Link>
+                                <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer text-red-500 hover:text-red-700">Xóa</div>
                             </div>,
                         }
                         arr.push(row);

@@ -127,7 +127,7 @@ function Header({ changeAvatar, handleSetUser }) {
                                 <li className='py-1'><Link to='/user/tai-khoan' className='hover:text-teal-500'>Thông tin tài khoản</Link></li>
                                 <li className='py-1'><Link to='/user/quan-ly-tin' className='hover:text-teal-500'>Quản lý tin đăng</Link></li>
                                 <li className='py-1'><Link to='/user/lich-su-giao-dich' className='hover:text-teal-500'>Lịch sử giao dịch</Link></li>
-                                <li className='py-1'><Link to='' className='hover:text-teal-500'>Tin đã lưu</Link></li>
+                                <li className='py-1'><Link to='/user/tin-da-luu' className='hover:text-teal-500'>Tin đã lưu</Link></li>
                                 <li className='py-1'>
                                     <div onClick={handleSignOut} className='hover:text-teal-500'>
                                         <FaSignOutAlt className='inline text-sm'/> 

@@ -51,9 +51,9 @@ function Dashboard({ page, user }) {
                     </li>
                     <li className='py-3 text-sm border-b-[1px] border-solid text-gray-500'>
                         <Link className={clsx({
-                            'text-teal-500': page === '',
-                            'font-bold': page === ''
-                        })} to=''>
+                            'text-teal-500': page === 'Tin đã lưu',
+                            'font-bold': page === 'Tin đã lưu'
+                        })} to='/user/tin-da-luu'>
                             Tin đã lưu
                         </Link>
                     </li>

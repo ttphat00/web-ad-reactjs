@@ -31,14 +31,14 @@ function Home() {
         <>
             <div className={styles.category}>
                 <div className={styles.title}>
-                    <h2 className='text-2xl'>Danh mục</h2>
+                    <h2 className='text-xl'>DANH MỤC</h2>
                 </div>
                 <div className={styles.list}>
                     <ul className='flex flex-wrap'>
                         {categories.map((category) => {
                             return (
                                 <li key={category._id} className={styles.item}>
-                                    <Link to={`/danh-muc/${category.title}`} className='flex items-center flex-col text-teal-700 hover:text-teal-500 hover:translate-y-px'>
+                                    <Link to={`/danh-muc/${category.title}`} className='flex items-center flex-col font-medium text-teal-700 hover:translate-y-px hover:shadow-[0_1px_7px_0_rgb(0,0,0,0.3)]'>
                                         <img src={category.image} alt='' className='mb-2 w-[50px] h-[50px] object-contain' />
                                         {category.title}
                                     </Link>
@@ -50,9 +50,9 @@ function Home() {
             </div>
             <div className={styles.advertising}>
                 <div className={styles.title}>
-                    <h2 className='text-2xl'>Tin mới</h2>
+                    <h2 className='text-xl'>TIN MỚI</h2>
                 </div>
-                <AdvertisingList cities={cities} />
+                <AdvertisingList cities={cities} itemsPerPage={9} />
             </div>
         </>
     )

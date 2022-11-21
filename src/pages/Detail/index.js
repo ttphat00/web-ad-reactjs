@@ -2,10 +2,11 @@ import AdvertisingList from '../../components/AdvertisingList';
 import { Link, useParams } from 'react-router-dom';
 import styles from './Detail.module.css';
 import { FaRegHeart } from 'react-icons/fa';
+import { FaHeart } from 'react-icons/fa';
 import { FaPhoneVolume } from 'react-icons/fa';
 import { useEffect } from 'react';
 import axios from 'axios';
-import { apiURL } from '../../config';
+import { apiURL, authorization } from '../../config';
 import { useState } from 'react';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
@@ -27,6 +28,7 @@ function Detail() {
     const [ city, setCity] = useState({});
     const [ cities, setCities] = useState([]);
     const [ host, setHost] = useState({});
+    const [ savedAd, setSavedAd] = useState();
 
     useEffect(() => {
         axios.get(`${apiURL}ads/title/${title}`)
@@ -79,6 +81,19 @@ function Detail() {
         }
     }, [ad])
 
+    useEffect(() => {
+        if(ad._id){
+            axios.get(`${apiURL}saved-ads/${ad._id}`, authorization(localStorage.getItem('token')))
+                .then(res => {
+                    // console.log(res.data);
+                    if(res.data){
+                        setSavedAd(true);
+                    }else setSavedAd(false);
+                })
+                .catch(err => console.log(err))
+        }
+    }, [ad])
+
     const formatTime = (time) => {
         const createdDate = new Date(time);
         createdDate.setHours(createdDate.getHours() - 7);
@@ -88,6 +103,30 @@ function Detail() {
         const hour = createdDate.getHours();
         const minute = createdDate.getMinutes();
         return `${date}/${month}/${year} - ${hour}:${minute}`;
+    }
+
+    const handleSaveAd = () => {
+        if(savedAd){
+            axios.delete(`${apiURL}saved-ads/${ad._id}`, authorization(localStorage.getItem('token')))
+                .then(res => {
+                    console.log('Bo luu tin');
+                    setSavedAd(false);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }else{
+            axios.post(`${apiURL}saved-ads`, {
+                idAd: ad._id
+            },authorization(localStorage.getItem('token')))
+                .then(res => {
+                    console.log('Luu tin');
+                    setSavedAd(true);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
     }
 
     return (
@@ -114,7 +153,7 @@ function Detail() {
                         </Slider>
                     </div>
                     <div className='relative'>
-                        <div className={styles.save}>Lưu tin <FaRegHeart className='inline relative bottom-[1px]'/></div>
+                        <div className={styles.save} onClick={handleSaveAd}>Lưu tin {savedAd ? <FaHeart className='inline relative bottom-[1px]' /> : <FaRegHeart className='inline relative bottom-[1px]'/>}</div>
                     </div>
                     <div className={styles.title}>{ad.title}</div>
                     <div className={styles.time}>{formatTime(ad.createdAt)}</div>
@@ -138,7 +177,7 @@ function Detail() {
             </div>
             <div className={styles.related}>
                 <h3 className='text-lg font-bold'>Tin đăng cùng danh mục</h3>
-                {ad.idCategory && ad._id && <AdvertisingList cities={cities} idCategory={ad.idCategory} idAd={ad._id} />}
+                {ad.idCategory && ad._id && <AdvertisingList cities={cities} idCategory={ad.idCategory} idAd={ad._id} itemsPerPage={3} />}
             </div>
         </>
     )
