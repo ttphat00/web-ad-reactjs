@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 function TransactionDetail() {
     let { idOrder } = useParams();
     const [ order, setOrder ] = useState({});
+    const [ user, setUser ] = useState({});
     const [ ads, setAds ] = useState([]);
     const [ categories, setCategories ] = useState([]);
 
@@ -15,6 +16,10 @@ function TransactionDetail() {
             .then(res => {
                 // console.log(res.data);
                 setOrder(res.data);
+                return axios.get(`${apiURL}customers/${res.data.idCustomer}`)
+            })
+            .then(res => {
+                setUser(res.data);
             })
             .catch(err => console.log(err))
     }, [])
@@ -57,7 +62,9 @@ function TransactionDetail() {
                 {order.status==='Gia hạn tin' &&
                 <div className='px-6 py-8 text-sm bg-white'>
                     <div className='font-medium'>Thông tin đơn hàng:</div>
-                    <div className='mt-1 mb-1'>- Mã đơn hàng: <span className='font-medium'>{idOrder}</span></div>
+                    <div className='mt-1 mb-1'>- Tên khách hàng: <span className='font-medium'>{user.name}</span></div>
+                    <div className='mb-1'>- Email khách hàng: <span className='font-medium'>{user.email}</span></div>
+                    <div className='mb-1'>- Mã đơn hàng: <span className='font-medium'>{idOrder}</span></div>
                     <div>- Loại giao dịch: <span className='font-medium'>Gia hạn</span></div>
                     <div className='mt-1 mb-1'>- Ngày giao dịch: <span className='font-medium'>{formatTime(order.orderDate)}</span></div>
                     <div>- Tổng số tiền đã thanh toán: <span className='font-medium'>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalCost)}</span></div>

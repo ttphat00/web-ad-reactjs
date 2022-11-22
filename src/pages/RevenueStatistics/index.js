@@ -102,7 +102,7 @@ function RevenueStatistics({ handleSetPage }) {
             let saturday = 0;
             let sunday = 0;
             orders.map(order => {
-                if(order.status==='Chấp nhận' || order.status==='Gia hạn tin'){
+                if(order.status==='Chấp nhận' || order.status==='Gia hạn tin' || order.status==='Tin đã xóa' || order.status==='Bị từ chối'){
                     const orderDate = new Date(order.orderDate);
                     orderDate.setHours(orderDate.getHours() - 7);
                     if(isOnThisWeek(orderDate) && orderDate.getDay()===1){
@@ -119,6 +119,24 @@ function RevenueStatistics({ handleSetPage }) {
                         saturday += order.totalCost;
                     }else if(isOnThisWeek(orderDate) && orderDate.getDay()===0){
                         sunday += order.totalCost;
+                    }
+                }else if(order.status==='Hoàn trả tiền'){
+                    const orderDate = new Date(order.orderDate);
+                    orderDate.setHours(orderDate.getHours() - 7);
+                    if(isOnThisWeek(orderDate) && orderDate.getDay()===1){
+                        monday -= order.totalCost;
+                    }else if(isOnThisWeek(orderDate) && orderDate.getDay()===2){
+                        tuesday -= order.totalCost;
+                    }else if(isOnThisWeek(orderDate) && orderDate.getDay()===3){
+                        wednesday -= order.totalCost;
+                    }else if(isOnThisWeek(orderDate) && orderDate.getDay()===4){
+                        thursday -= order.totalCost;
+                    }else if(isOnThisWeek(orderDate) && orderDate.getDay()===5){
+                        friday -= order.totalCost;
+                    }else if(isOnThisWeek(orderDate) && orderDate.getDay()===6){
+                        saturday -= order.totalCost;
+                    }else if(isOnThisWeek(orderDate) && orderDate.getDay()===0){
+                        sunday -= order.totalCost;
                     }
                 }
             });
@@ -146,7 +164,7 @@ function RevenueStatistics({ handleSetPage }) {
             let dec = 0;
             const today = new Date();
             orders.map(order => {
-                if(order.status==='Chấp nhận' || order.status==='Gia hạn tin'){
+                if(order.status==='Chấp nhận' || order.status==='Gia hạn tin' || order.status==='Tin đã xóa' || order.status==='Bị từ chối'){
                     const orderDate = new Date(order.orderDate);
                     orderDate.setHours(orderDate.getHours() - 7);
                     if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===0){
@@ -173,6 +191,34 @@ function RevenueStatistics({ handleSetPage }) {
                         nov += order.totalCost;
                     }else if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===11){
                         dec += order.totalCost;
+                    }
+                }else if(order.status==='Hoàn trả tiền'){
+                    const orderDate = new Date(order.orderDate);
+                    orderDate.setHours(orderDate.getHours() - 7);
+                    if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===0){
+                        jan -= order.totalCost;
+                    }else if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===1){
+                        feb -= order.totalCost;
+                    }else if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===2){
+                        mar -= order.totalCost;
+                    }else if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===3){
+                        apr -= order.totalCost;
+                    }else if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===4){
+                        may -= order.totalCost;
+                    }else if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===5){
+                        jun -= order.totalCost;
+                    }else if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===6){
+                        jul -= order.totalCost;
+                    }else if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===7){
+                        aug -= order.totalCost;
+                    }else if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===8){
+                        sep -= order.totalCost;
+                    }else if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===9){
+                        oct -= order.totalCost;
+                    }else if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===10){
+                        nov -= order.totalCost;
+                    }else if(orderDate.getFullYear()===today.getFullYear() && orderDate.getMonth()===11){
+                        dec -= order.totalCost;
                     }
                 }
             });
@@ -203,11 +249,17 @@ function RevenueStatistics({ handleSetPage }) {
             for(let i=2018; i<=today.getFullYear(); i++){
                 let year = 0;
                 orders.map(order => {
-                    if(order.status==='Chấp nhận' || order.status==='Gia hạn tin'){
+                    if(order.status==='Chấp nhận' || order.status==='Gia hạn tin' || order.status==='Tin đã xóa' || order.status==='Bị từ chối'){
                         const orderDate = new Date(order.orderDate);
                         orderDate.setHours(orderDate.getHours() - 7);
                         if(orderDate.getFullYear()===i){
                             year += order.totalCost;
+                        }
+                    }else if(order.status==='Hoàn trả tiền'){
+                        const orderDate = new Date(order.orderDate);
+                        orderDate.setHours(orderDate.getHours() - 7);
+                        if(orderDate.getFullYear()===i){
+                            year -= order.totalCost;
                         }
                     }
                 });

@@ -19,13 +19,12 @@ const columns = [
         name: 'Tiêu đề',
         selector: row => row.title,
         sortable: true,
-        width: '250px',
     },
     {
         name: 'Ngày cập nhật',
         selector: row => row.createdAt,
         sortable: true,
-        width: '160px',
+        width: '140px',
     },
     {
         name: 'Ngày hết hạn',
@@ -50,13 +49,12 @@ const columns2 = [
         name: 'Tiêu đề',
         selector: row => row.title,
         sortable: true,
-        width: '250px',
     },
     {
         name: 'Ngày cập nhật',
         selector: row => row.createdAt,
         sortable: true,
-        width: '160px',
+        width: '140px',
     },
     {
         name: 'Lý do',
@@ -88,6 +86,9 @@ function AdsManage({ handleSetPage }) {
     const [ ads, setAds ] = useState([]);
     const [ orders, setOrders ] = useState([]);
     const [ user, setUser ] = useState({});
+
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [toggleCleared, setToggleCleared] = useState(false);
 
     //Data table
     const [ data, setData ] = useState([]);
@@ -158,6 +159,11 @@ function AdsManage({ handleSetPage }) {
 	}, [dateFrom, dateTo, resetPaginationToggle]);
     //*******************Filtering table
 
+    const handleChange = ({ selectedRows }) => {
+        setSelectedRows(selectedRows);
+        console.log(selectedRows);
+    };
+
     useEffect(() => {
         handleSetPage('Quản lý tin đăng');
     }, [])
@@ -215,11 +221,10 @@ function AdsManage({ handleSetPage }) {
         
         if(confirm){
             try {
-                const uploadData = new FormData();
 
-                uploadData.append("display", false);
-
-                const res1 = await axios.put(`${apiURL}ads/${idAd}`, uploadData);
+                const res1 = await axios.put(`${apiURL}ads/extend/${idAd}`, {
+                    display: false,
+                });
                 console.log('An tin');
 
                 const res2 = await axios.put(`${apiURL}orders/${idOrder}`, {
@@ -277,6 +282,47 @@ function AdsManage({ handleSetPage }) {
         }
     }
 
+    const handleDeleteManyAd = async () => {
+        const confirm = window.confirm('Bạn có chắc chắn muốn xóa các tin đã chọn?');
+        
+        if(confirm){
+            try {
+
+                const res1 = await axios.put(`${apiURL}ads/delete-many`, {
+                    ads: selectedRows,
+                });
+                console.log('An cac tin');
+
+                const res2 = await axios.put(`${apiURL}orders/delete-many`, {
+                    ads: selectedRows,
+                });
+                console.log('Thay doi trang thai thanh Tin bi xoa');
+
+                setShowSuccessNotification(true);
+
+                setSelectedRows([]);
+
+                setToggleCleared(!toggleCleared);
+
+                const arr = data.filter(ad => !(selectedRows.includes(ad)));
+
+                setData(arr);
+
+                setTimeout(() => {
+                    setShowSuccessNotification(false);
+                }, 5000);
+            } catch (error) {
+                console.log(error);
+
+                setShowErrorNotification(true);
+
+                setTimeout(() => {
+                    setShowErrorNotification(false);
+                }, 5000);
+            }
+        }
+    }
+
     useEffect(() => {
         axios.get(`${apiURL}customers/profile`, authorization(localStorage.getItem('token')))
             .then(res => setUser(res.data))
@@ -308,6 +354,7 @@ function AdsManage({ handleSetPage }) {
                         if(ad._id===order.adDetails[0].idAd && ad.display){
                             const row = {
                                 id: ad._id,
+                                idOrder: order._id,
                                 image: <Link to={`/chi-tiet/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
                                 title: <Link className="hover:text-teal-700" to={`/chi-tiet/${ad.title}`}>{ad.title}</Link>,
                                 createdAt: formatTime(ad.createdAt),
@@ -332,6 +379,7 @@ function AdsManage({ handleSetPage }) {
                         if(ad._id===order.adDetails[0].idAd && expireDate<today){
                             const row = {
                                 id: ad._id,
+                                idOrder: order._id,
                                 image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
                                 title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
                                 createdAt: formatTime(ad.createdAt),
@@ -353,6 +401,7 @@ function AdsManage({ handleSetPage }) {
                         if(ad._id===order.adDetails[0].idAd){
                             const row = {
                                 id: ad._id,
+                                idOrder: order._id,
                                 image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
                                 title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
                                 createdAt: formatTime(ad.createdAt),
@@ -373,12 +422,13 @@ function AdsManage({ handleSetPage }) {
                     if(ad._id===order.adDetails[0].idAd){
                         const row = {
                             id: ad._id,
+                            idOrder: order._id,
                             image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
                             title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
                             createdAt: formatTime(ad.createdAt),
                             reason: <div className="text-yellow-700">Nội dung không phù hợp</div>,
                             manage: <div className="flex">
-                                <Link to={`/user/cap-nhat-tin/${ad._id}`} className="mr-3 text-blue-500 hover:text-blue-700">Sửa</Link>
+                                {/* <Link to={`/user/cap-nhat-tin/${ad._id}`} className="mr-3 text-blue-500 hover:text-blue-700">Sửa</Link> */}
                                 <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer text-red-500 hover:text-red-700">Xóa</div>
                             </div>,
                         }
@@ -398,7 +448,7 @@ function AdsManage({ handleSetPage }) {
             {showErrorNotification && <ErrorNotification />}
             {showSuccessNotification && <SuccessNotification />}
             <div className="flex border-b-[1px] border-gray-200 text-sm">
-                <div onClick={() => setTab('Tin đang rao')} className={clsx("py-1 cursor-pointer mr-10", {
+                <div onClick={() => {setTab('Tin đang rao'); setToggleCleared(!toggleCleared); setSelectedRows([]);}} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin đang rao',
                     'border-teal-500': tab === 'Tin đang rao',
                     'hover:text-black': tab !== 'Tin đang rao',
@@ -406,7 +456,7 @@ function AdsManage({ handleSetPage }) {
                 })}>
                     Tin đang rao
                 </div>
-                <div onClick={() => setTab('Tin chờ duyệt')} className={clsx("py-1 cursor-pointer mr-10", {
+                <div onClick={() => {setTab('Tin chờ duyệt'); setToggleCleared(!toggleCleared); setSelectedRows([]);}} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin chờ duyệt',
                     'border-teal-500': tab === 'Tin chờ duyệt',
                     'hover:text-black': tab !== 'Tin chờ duyệt',
@@ -414,7 +464,7 @@ function AdsManage({ handleSetPage }) {
                 })}>
                     Tin chờ duyệt
                 </div>
-                <div onClick={() => setTab('Tin hết hạn')} className={clsx("py-1 cursor-pointer mr-10", {
+                <div onClick={() => {setTab('Tin hết hạn'); setToggleCleared(!toggleCleared); setSelectedRows([]);}} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin hết hạn',
                     'border-teal-500': tab === 'Tin hết hạn',
                     'hover:text-black': tab !== 'Tin hết hạn',
@@ -422,7 +472,7 @@ function AdsManage({ handleSetPage }) {
                 })}>
                     Tin hết hạn
                 </div>
-                <div onClick={() => setTab('Tin bị từ chối')} className={clsx("py-1 cursor-pointer mr-10", {
+                <div onClick={() => {setTab('Tin bị từ chối'); setToggleCleared(!toggleCleared); setSelectedRows([]);}} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin bị từ chối',
                     'border-teal-500': tab === 'Tin bị từ chối',
                     'hover:text-black': tab !== 'Tin bị từ chối',
@@ -431,7 +481,12 @@ function AdsManage({ handleSetPage }) {
                     Tin bị từ chối
                 </div>
             </div>
-            <div>
+            <div className="relative">
+                {selectedRows.length!==0 &&
+                <div className="absolute z-50 top-[32px] left-[18px]">
+                    <button onClick={handleDeleteManyAd} className="bg-red-500 hover:bg-red-700 text-white text-sm px-3 rounded">Xóa</button>
+                </div>
+                }
                 {tab==='Tin bị từ chối'
                 ?
                 <DataTable
@@ -443,6 +498,9 @@ function AdsManage({ handleSetPage }) {
                     subHeader
                     subHeaderComponent={subHeaderComponentMemo}
                     persistTableHead
+                    selectableRows
+                    onSelectedRowsChange={handleChange}
+                    clearSelectedRows={toggleCleared}
                 />
                 :
                 <DataTable
@@ -454,6 +512,9 @@ function AdsManage({ handleSetPage }) {
                     subHeader
                     subHeaderComponent={subHeaderComponentMemo}
                     persistTableHead
+                    selectableRows
+                    onSelectedRowsChange={handleChange}
+                    clearSelectedRows={toggleCleared}
                 />
                 }
             </div>

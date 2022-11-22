@@ -83,6 +83,9 @@ function AdminAdsManage({ handleSetPage }) {
     const [ ads, setAds ] = useState([]);
     const [ orders, setOrders ] = useState([]);
 
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [toggleCleared, setToggleCleared] = useState(false);
+
     //Data table
     const [ data, setData ] = useState([]);
 
@@ -151,6 +154,11 @@ function AdminAdsManage({ handleSetPage }) {
 		);
 	}, [dateFrom, dateTo, resetPaginationToggle]);
     //*******************Filtering table
+
+    const handleChange = ({ selectedRows }) => {
+        setSelectedRows(selectedRows);
+        console.log(selectedRows);
+    };
 
     useEffect(() => {
         handleSetPage('Quản lý tin');
@@ -237,7 +245,7 @@ function AdminAdsManage({ handleSetPage }) {
     }
 
     const handleRefuseAd = (idAd, idOrder, idCustomer, totalCost, orderDate, cost) => {
-        const confirm = window.confirm('');
+        const confirm = window.confirm('Bạn có chắc chắn muốn từ chối tin này?');
         if(confirm){
             const today = new Date();
             today.setHours(today.getHours() + 7);
@@ -290,44 +298,6 @@ function AdminAdsManage({ handleSetPage }) {
                 })
         }
     }
-
-    // const handleDeleteAd = async (idAd, idOrder) => {
-    //     const confirm = window.confirm('Bạn có chắc chắn muốn xóa tin quảng cáo này?');
-        
-    //     if(confirm){
-    //         try {
-    //             const uploadData = new FormData();
-
-    //             uploadData.append("display", false);
-
-    //             const res1 = await axios.put(`${apiURL}ads/${idAd}`, uploadData);
-    //             console.log('An tin');
-
-    //             const res2 = await axios.put(`${apiURL}orders/${idOrder}`, {
-    //                 status: 'Tin đã xóa',
-    //             });
-    //             console.log('Thay doi trang thai thanh Tin bi xoa');
-
-    //             setShowSuccessNotification(true);
-
-    //             const arr = data.filter(ad => ad.id !== idAd);
-
-    //             setData(arr);
-
-    //             setTimeout(() => {
-    //                 setShowSuccessNotification(false);
-    //             }, 5000);
-    //         } catch (error) {
-    //             console.log(error);
-
-    //             setShowErrorNotification(true);
-
-    //             setTimeout(() => {
-    //                 setShowErrorNotification(false);
-    //             }, 5000);
-    //         }
-    //     }
-    // }
 
     useEffect(() => {
         axios.get(`${apiURL}ads`)
@@ -392,6 +362,7 @@ function AdminAdsManage({ handleSetPage }) {
                     if(ad._id===order.adDetails[0].idAd){
                         const row = {
                             id: ad._id,
+                            idOrder: order._id,
                             image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
                             title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
                             createdAt: formatTime(ad.createdAt),
@@ -431,7 +402,7 @@ function AdminAdsManage({ handleSetPage }) {
                 })}>
                     Tin đã duyệt
                 </div>
-                <div onClick={() => setTab('Tin bị từ chối')} className={clsx("py-1 cursor-pointer mr-10", {
+                <div onClick={() => {setTab('Tin bị từ chối'); setToggleCleared(!toggleCleared); setSelectedRows([]);}} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin bị từ chối',
                     'border-teal-500': tab === 'Tin bị từ chối',
                     'hover:text-black': tab !== 'Tin bị từ chối',
@@ -440,7 +411,12 @@ function AdminAdsManage({ handleSetPage }) {
                     Tin bị từ chối
                 </div>
             </div>
-            <div>
+            <div className="relative">
+                {selectedRows.length!==0 &&
+                <div className="absolute z-50 top-[32px] left-[18px]">
+                    <button className="bg-red-500 hover:bg-red-700 text-white text-sm px-3 rounded">Xóa</button>
+                </div>
+                }
                 {tab==='Tin bị từ chối'
                 ?
                 <DataTable
@@ -452,6 +428,9 @@ function AdminAdsManage({ handleSetPage }) {
                     subHeader
                     subHeaderComponent={subHeaderComponentMemo}
                     persistTableHead
+                    selectableRows
+                    onSelectedRowsChange={handleChange}
+                    clearSelectedRows={toggleCleared}
                 />
                 :
                 <DataTable
