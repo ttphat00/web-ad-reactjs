@@ -21,7 +21,7 @@ function Detail() {
         slidesToScroll: 1
     };
 
-    let { title } = useParams();
+    let { id } = useParams();
     const [ showPhone, setShowPhone ] = useState(false);
     const [ ad, setAd ] = useState({});
     const [ categories, setCategories] = useState([]);
@@ -31,12 +31,12 @@ function Detail() {
     const [ savedAd, setSavedAd] = useState();
 
     useEffect(() => {
-        axios.get(`${apiURL}ads/title/${title}`)
+        axios.get(`${apiURL}ads/${id}`)
             .then(res => {
                 setAd(res.data);
             })
             .catch(err => console.log(err))
-    }, [title])
+    }, [id])
 
     useEffect(() => {
         axios.get(`${apiURL}categories`)
@@ -138,7 +138,7 @@ function Detail() {
                             return <Link key={category._id} to={`/danh-muc/${category.title}`} className='text-teal-500 hover:text-teal-700'>{category.title}</Link>
                         }else return null;
                     })
-                } / {title}</h2>
+                } / {ad.title}</h2>
             </div>
             <div className={styles.content}>
                 <div className={styles.detail}>

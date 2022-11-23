@@ -15,6 +15,7 @@ const columns = [
         name: 'Tiêu đề',
         selector: row => row.title,
         sortable: true,
+        width: '582px',
     },
     {
         name: '',
@@ -155,7 +156,7 @@ function SavedAdsManage({ handleSetPage }) {
                     if(ad._id===savedad.idAd){
                         const row = {
                             id: ad._id,
-                            image: <Link to={`/chi-tiet/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                            image: <Link to={`/chi-tiet/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
                             title: ad.title,
                             manage: <div className="flex text-teal-500">
                                 <div onClick={() => handleCancelSaved(ad._id)} className="cursor-pointer text-red-500 hover:text-red-700">Bỏ lưu</div>

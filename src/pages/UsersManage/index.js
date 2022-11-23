@@ -15,11 +15,13 @@ const columns = [
         name: 'Tên người dùng',
         selector: row => row.name,
         sortable: true,
+        width: '226px',
     },
     {
         name: 'Email',
         selector: row => row.email,
         sortable: true,
+        width: '226px',
     },
     {
         name: 'Ngày tạo',

@@ -8,6 +8,7 @@ import { apiURL, authorization } from "../../config";
 import ErrorNotification from "../../components/Notification/ErrorNotification";
 import SuccessNotification from "../../components/Notification/SuccessNotification";
 import PopupExtend from "../../components/Popups/PopupExtend";
+import PopupExtendOfExpireAd from "../../components/Popups/PopupExtendOfExpireAd";
 
 const columns = [
     {
@@ -19,6 +20,7 @@ const columns = [
         name: 'Tiêu đề',
         selector: row => row.title,
         sortable: true,
+        width: '220px',
     },
     {
         name: 'Ngày cập nhật',
@@ -49,6 +51,7 @@ const columns2 = [
         name: 'Tiêu đề',
         selector: row => row.title,
         sortable: true,
+        width: '220px',
     },
     {
         name: 'Ngày cập nhật',
@@ -79,7 +82,9 @@ const paginationComponentOptions = {
 
 function AdsManage({ handleSetPage }) {
     const [showPopupExtend, setShowPopupExtend] = useState(false);
+    const [showPopupExtendOfExpireAd, setShowPopupExtendOfExpireAd] = useState(false);
     const [idAd, setIdAd] = useState('');
+    const [idOrder, setIdOrder] = useState('');
     const [showErrorNotification, setShowErrorNotification] = useState(false);
     const [showSuccessNotification, setShowSuccessNotification] = useState(false);
     const [ tab, setTab ] = useState('Tin đang rao');
@@ -161,7 +166,7 @@ function AdsManage({ handleSetPage }) {
 
     const handleChange = ({ selectedRows }) => {
         setSelectedRows(selectedRows);
-        console.log(selectedRows);
+        // console.log(selectedRows);
     };
 
     useEffect(() => {
@@ -355,8 +360,8 @@ function AdsManage({ handleSetPage }) {
                             const row = {
                                 id: ad._id,
                                 idOrder: order._id,
-                                image: <Link to={`/chi-tiet/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                                title: <Link className="hover:text-teal-700" to={`/chi-tiet/${ad.title}`}>{ad.title}</Link>,
+                                image: <Link to={`/chi-tiet/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                                title: <Link className="hover:text-teal-700" to={`/chi-tiet/${ad._id}`}>{ad.title}</Link>,
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
                                 manage: <div className="flex">
@@ -380,12 +385,12 @@ function AdsManage({ handleSetPage }) {
                             const row = {
                                 id: ad._id,
                                 idOrder: order._id,
-                                image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                                title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
+                                image: <Link to={`/xem-truoc/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                                title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad._id}`}>{ad.title}</Link>,
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
                                 manage: <div className="flex text-teal-500">
-                                    <div onClick={() => {setShowPopupExtend(true); setIdAd(ad._id)}} className="mr-3 cursor-pointer text-yellow-700 hover:text-yellow-900">Gia hạn</div>
+                                    <div onClick={() => {setShowPopupExtendOfExpireAd(true); setIdAd(ad._id); setIdOrder(order._id);}} className="mr-3 cursor-pointer text-yellow-700 hover:text-yellow-900">Gia hạn</div>
                                     <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer text-red-500 hover:text-red-700">Xóa</div>
                                 </div>,
                             }
@@ -402,8 +407,8 @@ function AdsManage({ handleSetPage }) {
                             const row = {
                                 id: ad._id,
                                 idOrder: order._id,
-                                image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                                title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
+                                image: <Link to={`/xem-truoc/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                                title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad._id}`}>{ad.title}</Link>,
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
                                 manage: <div className="flex text-teal-500">
@@ -423,8 +428,8 @@ function AdsManage({ handleSetPage }) {
                         const row = {
                             id: ad._id,
                             idOrder: order._id,
-                            image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                            title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
+                            image: <Link to={`/xem-truoc/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                            title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad._id}`}>{ad.title}</Link>,
                             createdAt: formatTime(ad.createdAt),
                             reason: <div className="text-yellow-700">Nội dung không phù hợp</div>,
                             manage: <div className="flex">
@@ -445,6 +450,7 @@ function AdsManage({ handleSetPage }) {
     return ( 
         <div>
             {showPopupExtend && <PopupExtend handleShowPopupExtend={setShowPopupExtend} idAd={idAd} />}
+            {showPopupExtendOfExpireAd && <PopupExtendOfExpireAd handleShowPopupExtendOfExpireAd={setShowPopupExtendOfExpireAd} idAd={idAd} idOrder={idOrder} />}
             {showErrorNotification && <ErrorNotification />}
             {showSuccessNotification && <SuccessNotification />}
             <div className="flex border-b-[1px] border-gray-200 text-sm">

@@ -5,13 +5,13 @@ import { apiURL } from '../../config';
 import { useParams } from 'react-router-dom';
 
 function DetailPreview() {
-    let { title } = useParams();
+    let { id } = useParams();
     const [ city, setCity ] = useState({});
     const [ ad, setAd ] = useState({});
     const [ category, setCategory ] = useState({});
 
     useEffect(() => {
-        axios.get(`${apiURL}ads/title/${title}`)
+        axios.get(`${apiURL}ads/${id}`)
             .then(res => {
                 // console.log(res.data);
                 setAd(res.data);

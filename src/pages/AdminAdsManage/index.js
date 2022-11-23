@@ -18,6 +18,7 @@ const columns = [
         name: 'Tiêu đề',
         selector: row => row.title,
         sortable: true,
+        width: '220px',
     },
     {
         name: 'Ngày cập nhật',
@@ -48,12 +49,13 @@ const columns2 = [
         name: 'Tiêu đề',
         selector: row => row.title,
         sortable: true,
+        width: '220px',
     },
     {
         name: 'Ngày cập nhật',
         selector: row => row.createdAt,
         sortable: true,
-        width: '160px',
+        width: '140px',
     },
     {
         name: 'Lý do',
@@ -63,7 +65,7 @@ const columns2 = [
     {
         name: '',
         selector: row => row.manage,
-        width: '100px',
+        width: '80px',
     },
 ];
 
@@ -157,7 +159,7 @@ function AdminAdsManage({ handleSetPage }) {
 
     const handleChange = ({ selectedRows }) => {
         setSelectedRows(selectedRows);
-        console.log(selectedRows);
+        // console.log(selectedRows);
     };
 
     useEffect(() => {
@@ -324,8 +326,8 @@ function AdminAdsManage({ handleSetPage }) {
                         if(ad._id===order.adDetails[0].idAd && ad.display){
                             const row = {
                                 id: ad._id,
-                                image: <Link to={`/chi-tiet/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                                title: <Link className="hover:text-teal-700" to={`/chi-tiet/${ad.title}`}>{ad.title}</Link>,
+                                image: <Link to={`/chi-tiet/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                                title: <Link className="hover:text-teal-700" to={`/chi-tiet/${ad._id}`}>{ad.title}</Link>,
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
                                 manage: '',
@@ -342,8 +344,8 @@ function AdminAdsManage({ handleSetPage }) {
                         if(ad._id===order.adDetails[0].idAd){
                             const row = {
                                 id: ad._id,
-                                image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                                title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
+                                image: <Link to={`/xem-truoc/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                                title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad._id}`}>{ad.title}</Link>,
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
                                 manage: <div className="flex">
@@ -363,8 +365,8 @@ function AdminAdsManage({ handleSetPage }) {
                         const row = {
                             id: ad._id,
                             idOrder: order._id,
-                            image: <Link to={`/xem-truoc/${ad.title}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                            title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad.title}`}>{ad.title}</Link>,
+                            image: <Link to={`/xem-truoc/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                            title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad._id}`}>{ad.title}</Link>,
                             createdAt: formatTime(ad.createdAt),
                             reason: <div className="text-yellow-700">Nội dung không phù hợp</div>,
                             manage: <div className="flex text-red-500">

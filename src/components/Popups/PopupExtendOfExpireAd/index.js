@@ -1,4 +1,4 @@
-import styles from './PopupExtend.module.css';
+import styles from './PopupExtendOfExpireAd.module.css';
 import { FaWindowClose } from "react-icons/fa";
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
@@ -7,7 +7,7 @@ import { apiURL, authorization } from '../../../config';
 import ErrorNotification from '../../Notification/ErrorNotification';
 import { useNavigate } from 'react-router-dom';
 
-function PopupExtend({ handleShowPopupExtend, idAd }) {
+function PopupExtendOfExpireAd({ handleShowPopupExtendOfExpireAd, idAd, idOrder }) {
     let navigate = useNavigate();
     const [showErrorNotification, setShowErrorNotification] = useState(false);
     const [ user, setUser ] = useState({});
@@ -42,9 +42,10 @@ function PopupExtend({ handleShowPopupExtend, idAd }) {
 
     const handleExtend = () => {
         const today = new Date();
-        const expireDate = new Date(ad.expireDate);
+        const expireDate = new Date();
         
         today.setHours(today.getHours() + 7);
+        expireDate.setHours(expireDate.getHours() + 7);
         expireDate.setDate(expireDate.getDate() + parseInt(duration));
 
         // if((parseInt(user.accountBalance) - parseInt(duration)*10000) >= 0){
@@ -60,12 +61,17 @@ function PopupExtend({ handleShowPopupExtend, idAd }) {
             //          })
             //     })
                 axios.put(`${apiURL}ads/extend/${idAd}`, {
-                    display: true,
                     expireDate: expireDate,
                     numberOfExtensionDays: parseInt(ad.numberOfExtensionDays) + parseInt(duration),
                 })
                     .then(res => {
-                        console.log('Cap nhat thoi han tin quang cao')
+                        console.log('Cap nhat thoi han tin quang cao');
+                        return axios.put(`${apiURL}orders/${idOrder}`, {
+                            status: 'Đang chờ xác nhận',
+                        })
+                    })
+                    .then(res => {
+                        console.log('Cap nhat thanh trang thai Dang cho xac nhan');
                         return axios.post(`${apiURL}orders`, {
                             totalCost: parseInt(duration)*10000,
                             idAd: idAd,
@@ -93,11 +99,11 @@ function PopupExtend({ handleShowPopupExtend, idAd }) {
     }
 
     return ( 
-        <div onClick={() => handleShowPopupExtend(false)} className={styles.wrapper}>
+        <div onClick={() => handleShowPopupExtendOfExpireAd(false)} className={styles.wrapper}>
             {showErrorNotification && <ErrorNotification />}
             <div onClick={(e) => e.stopPropagation()} className={styles.inner}>
                 <div 
-                onClick={() => handleShowPopupExtend(false)}
+                onClick={() => handleShowPopupExtendOfExpireAd(false)}
                 className='absolute top-[-15px] right-[-10px] cursor-pointer'
                 >
                     <FaWindowClose className='text-white text-xl rounded-full' />
@@ -112,7 +118,7 @@ function PopupExtend({ handleShowPopupExtend, idAd }) {
                     <form className="bg-white px-8 pt-6 pb-8 mb-4">
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="duration">
-                                Thêm thời hạn
+                                Chọn thời hạn
                                 <span className='font-normal italic'> (10.000 VNĐ/ngày)</span>
                             </label>
                             <div className='flex'>
@@ -157,4 +163,4 @@ function PopupExtend({ handleShowPopupExtend, idAd }) {
     );
 }
 
-export default PopupExtend;
+export default PopupExtendOfExpireAd;

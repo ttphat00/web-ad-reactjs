@@ -16,6 +16,7 @@ const columns = [
         name: 'Tên danh mục',
         selector: row => row.title,
         sortable: true,
+        width: '552px',
     },
     {
         name: '',

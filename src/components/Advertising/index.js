@@ -3,7 +3,7 @@ import styles from './Advertising.module.css';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { FaRegClock } from 'react-icons/fa';
 
-function Advertising({ image, title, idCity, time, cities }) {
+function Advertising({ id, image, title, idCity, time, cities }) {
 
     const formatTime = (time) => {
         const date = new Date(time);
@@ -15,7 +15,7 @@ function Advertising({ image, title, idCity, time, cities }) {
 
     return (
         <li className={styles.item}>
-            <Link to={`/chi-tiet/${title}`} className="flex hover:shadow-[0_1px_7px_0_rgb(0,0,0,0.3)]">
+            <Link to={`/chi-tiet/${id}`} className="flex hover:shadow-[0_1px_7px_0_rgb(0,0,0,0.3)]">
                 <div className={styles.image}>
                     <img className="w-full h-full object-contain" src={image} alt="" />
                 </div>

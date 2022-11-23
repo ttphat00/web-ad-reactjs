@@ -139,7 +139,7 @@ function AdvertisingList({ cities, keyWord, idCategory, idAd, idCity, status, it
 
                 {
                     currentItems && currentItems.map(ad => {
-                        return <Advertising key={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
+                        return <Advertising key={ad._id} id={ad._id} image={ad.images[0].url} title={ad.title} idCity={ad.idCity} time={ad.createdAt} cities={cities}/>
                     })
                 }
 
