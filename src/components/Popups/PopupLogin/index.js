@@ -9,6 +9,7 @@ import axios from 'axios';
 import { apiURL } from '../../../config';
 import SuccessNotification from '../../Notification/SuccessNotification';
 import ErrorNotification from '../../Notification/ErrorNotification';
+import emailjs from '@emailjs/browser';
 
 function PopupLogin({ handleShowLogin, handleLogedIn }) {
     const [showSuccessNotification, setShowSuccessNotification] = useState(false);
@@ -18,12 +19,18 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showCodeText, setShowCodeText] = useState(false);
+    const [code, setCode] = useState('');
+    const [codeText, setCodeText] = useState('');
+    const [showError, setShowError] = useState(false);
+    const [waitButton, setWaitButton] = useState(false);
 
     const handleShowSignIn = () => {
         setForm('signin');
         setEmail('');
         setPassword('');
         setToggle(true);
+        setShowCodeText(false);
     }
 
     const handleShowSignUp = () => {
@@ -32,6 +39,7 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
         setPassword('');
         setName('');
         setToggle(true);
+        setShowCodeText(false);
     }
 
     const handleTogglePassword = () => {
@@ -50,73 +58,123 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
         setPassword(e.target.value);
     }
 
-    const handleSignUp = async () => {
-        try {
-            const createdAt = new Date();
+    const handleChangeCodeText = (e) => {
+        setCodeText(e.target.value);
+        setShowError(false);
+    }
+
+    const handleGetCode = (e) => {
+        const form = e.currentTarget;
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (form.checkValidity()) {
             
-            createdAt.setHours(createdAt.getHours() + 7);
-            
-            const res = await axios.post(`${apiURL}auth/register`, {
-                name,
-                email,
-                password,
-                createdAt
-            });
-
-            console.log(res.data);
-
-            setShowSuccessNotification(true);
-
-            setForm('signin');
-            setEmail('');
-            setPassword('');
-
-            setTimeout(() => {
-                setShowSuccessNotification(false);
-            }, 5000);
-
-        } catch (error) {
-
-            console.log(error);
-
-            setShowErrorNotification(true);
-
-            setTimeout(() => {
-                setShowErrorNotification(false);
-            }, 5000);
+            setShowCodeText(true);
+    
+            const randomCode = Math.round(Math.random()*1000000);
+        
+            emailjs.send(process.env.REACT_APP_EMAIL_SERVICE, process.env.REACT_APP_EMAIL_TEMPLATE_SIGN_UP, {
+                to_email: email,
+                code: randomCode,
+            }, process.env.REACT_APP_EMAIL_PUBLIC_KEY)
+                .then((result) => {
+                    console.log(result);
+                }, (error) => {
+                    console.log(error);
+                });
+    
+            setCode(randomCode);
         }
     }
 
-    const handleSignIn = async () => {
-        try {
-            const res = await axios.post(`${apiURL}auth/customer-login`, {
-                email,
-                password
-            });
+    const handleSignUp = async () => {
 
-            console.log(res.data);
+        setTimeout(async () => {
 
-            setShowSuccessNotification(true);
+            if(parseInt(codeText)===parseInt(code)){
+                try {
+                    const createdAt = new Date();
+                    
+                    createdAt.setHours(createdAt.getHours() + 7);
+                    
+                    const res = await axios.post(`${apiURL}auth/register`, {
+                        name,
+                        email,
+                        password,
+                        createdAt
+                    });
+        
+                    console.log(res.data);
+        
+                    setShowSuccessNotification(true);
+        
+                    setForm('signin');
+                    setEmail('');
+                    setPassword('');
+                    setShowCodeText(false);
+        
+                    setTimeout(() => {
+                        setShowSuccessNotification(false);
+                    }, 5000);
+        
+                } catch (error) {
+        
+                    console.log(error);
+        
+                    setShowErrorNotification(true);
+        
+                    setTimeout(() => {
+                        setShowErrorNotification(false);
+                    }, 5000);
+                }
+            }else{
+                setShowError(true);
+            }
 
-            handleShowLogin();
+            setWaitButton(false);
 
-            localStorage.setItem('token', res.data.accessToken);
+        }, 5000);
 
-            handleLogedIn(true);
+        setWaitButton(true);
+    }
 
-            setTimeout(() => {
-                setShowSuccessNotification(false);
-            }, 5000);
+    const handleSignIn = async (e) => {
+        const form = e.currentTarget;
+        e.preventDefault();
+        e.stopPropagation();
 
-        } catch (error) {
-
-            console.log(error);
-
-            setShowErrorNotification(true);
-
-            setTimeout(() => {
-                setShowErrorNotification(false);
-            }, 5000);
+        if (form.checkValidity()) {
+            try {
+                const res = await axios.post(`${apiURL}auth/customer-login`, {
+                    email,
+                    password
+                });
+    
+                console.log(res.data);
+    
+                setShowSuccessNotification(true);
+    
+                handleShowLogin();
+    
+                localStorage.setItem('token', res.data.accessToken);
+    
+                handleLogedIn(true);
+    
+                setTimeout(() => {
+                    setShowSuccessNotification(false);
+                }, 5000);
+    
+            } catch (error) {
+    
+                console.log(error);
+    
+                setShowErrorNotification(true);
+    
+                setTimeout(() => {
+                    setShowErrorNotification(false);
+                }, 5000);
+            }
         }
     }
 
@@ -152,10 +210,9 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
                         Đăng ký
                     </div>
                 </div>
-                {form === 'signup'
-                ?
+                {form === 'signup' && !showCodeText &&
                 <div>
-                    <form className="bg-white px-8 pt-6 pb-8 mb-4">
+                    <form className="bg-white px-8 pt-6 pb-8 mb-4" onSubmit={handleGetCode}>
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
                                 Tên liên hệ
@@ -181,16 +238,39 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
                             }
                         </div>
                         <div className="flex items-center justify-between">
-                            <button onClick={handleSignUp} className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="button">
+                            <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
                                 Đăng ký
                             </button>
                         </div>
                     </form>
                 </div>
-                : 
+                }   
+                {form === 'signup' && showCodeText &&
+                <div>
+                    <form className="bg-white px-8 pt-6 pb-8 mb-4">
+                        <div className="mb-4">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="code">
+                                Mã xác nhận
+                            </label>
+                            <input value={codeText} onChange={handleChangeCodeText} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="code" type="text" placeholder="Nhập mã xác nhận" required />
+                            {showError && <span className='text-sm text-red-500'>Mã xác nhận không đúng.</span>}
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <button onClick={handleSignUp} className={clsx("bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full", {
+                                'cursor-wait': waitButton,
+                                'bg-gray-500': waitButton,
+                                'hover:bg-gray-500': waitButton,
+                            })} disabled={waitButton} type="button">
+                                Xác nhận
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                }   
+                {form === 'signin' &&
                 <div>
                     <div className={styles.form}>
-                        <form className="bg-white px-8 pt-6 pb-8 mb-4">
+                        <form className="bg-white px-8 pt-6 pb-8 mb-4" onSubmit={handleSignIn}>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                                     Email
@@ -210,7 +290,7 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
                                 }
                             </div>
                             <div className="flex items-center justify-between">
-                                <button onClick={handleSignIn} className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-[60%]" type="button">
+                                <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-[60%]" type="submit">
                                     Đăng nhập
                                 </button>
                                 <Link className="inline-block align-baseline font-bold text-sm text-teal-500 hover:text-teal-800" to="">

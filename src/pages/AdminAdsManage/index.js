@@ -5,6 +5,7 @@ import DataTable from 'react-data-table-component';
 import { FaWindowClose } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { apiURL } from "../../config";
+import emailjs from '@emailjs/browser';
 import ErrorNotification from "../../components/Notification/ErrorNotification";
 // import SuccessNotification from "../../components/Notification/SuccessNotification";
 
@@ -214,13 +215,24 @@ function AdminAdsManage({ handleSetPage }) {
         return `${year}-${month}-${date} - ${hour}:${minute}`;
     }
 
-    const handleAcceptAd = (idAd, idOrder) => {
+    const handleAcceptAd = (idAd, idOrder, idCustomer) => {
         const today = new Date();
         today.setHours(today.getHours() + 7);
 
-        axios.put(`${apiURL}ads/extend/${idAd}`, {
-            display: true
-        })
+        axios.get(`${apiURL}customers/${idCustomer}`)
+            .then(res => {
+                return emailjs.send(process.env.REACT_APP_EMAIL_SERVICE, process.env.REACT_APP_EMAIL_TEMPLATE_APPROVE_AD, {
+                    to_email: res.data.email,
+                    subject: 'Tin được chấp nhận',
+                    content: 'Tin quảng cáo của bạn đã được duyệt và đăng lên thành công.',
+                }, process.env.REACT_APP_EMAIL_PUBLIC_KEY)
+            })
+            .then(result => {
+                console.log(result);
+                return axios.put(`${apiURL}ads/extend/${idAd}`, {
+                    display: true
+                })
+            })
             .then(res => {
                 console.log('Hien tin');
                 return axios.put(`${apiURL}orders/${idOrder}`, {
@@ -252,24 +264,21 @@ function AdminAdsManage({ handleSetPage }) {
             const today = new Date();
             today.setHours(today.getHours() + 7);
 
-            // axios.get(`${apiURL}customers/${idCustomer}`)
-            //     .then(res => {
-            //         const accountBalance = res.data.accountBalance;
-            //         return axios.put(`${apiURL}customers/update/${idCustomer}`, {
-            //             accountBalance: (accountBalance + totalCost)
-            //         })
-            //     })
-            //     .then(res => {
-            //         console.log('Tra tien cho khach hang');
-            //         return axios.put(`${apiURL}orders/${idOrder}`, {
-            //             status: 'Bị từ chối',
-            //             approvalDate: today,
-            //         })
-            //     })
-            axios.put(`${apiURL}orders/${idOrder}`, {
-                status: 'Bị từ chối',
-                approvalDate: today,
-            })
+            axios.get(`${apiURL}customers/${idCustomer}`)
+                .then(res => {
+                    return emailjs.send(process.env.REACT_APP_EMAIL_SERVICE, process.env.REACT_APP_EMAIL_TEMPLATE_APPROVE_AD, {
+                        to_email: res.data.email,
+                        subject: 'Tin bị từ chối',
+                        content: 'Tin quảng cáo của bạn đã bị từ chối vì lý do nội dung không phù hợp. Tiền của bạn sẽ được hoàn trả lại sau.',
+                    }, process.env.REACT_APP_EMAIL_PUBLIC_KEY)
+                })
+                .then(result => {
+                    console.log(result);
+                    return axios.put(`${apiURL}orders/${idOrder}`, {
+                        status: 'Bị từ chối',
+                        approvalDate: today,
+                    })
+                })
                 .then(res => {
                     console.log('Thay doi trang thai thanh Bi tu choi');
                     return axios.post(`${apiURL}orders/admin-order`, {
@@ -349,7 +358,7 @@ function AdminAdsManage({ handleSetPage }) {
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
                                 manage: <div className="flex">
-                                    <div onClick={() => handleAcceptAd(ad._id, order._id)} className="cursor-pointer text-teal-500 hover:text-teal-700 mr-4">Chấp nhận</div>
+                                    <div onClick={() => handleAcceptAd(ad._id, order._id, order.idCustomer)} className="cursor-pointer text-teal-500 hover:text-teal-700 mr-4">Chấp nhận</div>
                                     <div onClick={() => handleRefuseAd(ad._id, order._id, order.idCustomer, order.totalCost, order.orderDate, order.adDetails[0].cost)} className="cursor-pointer text-red-500 hover:text-red-700">Từ chối</div>
                                 </div>,
                             }

@@ -73,10 +73,6 @@ function AccountInfo({ handleSetPage, changeAvatar }) {
             {showErrorNotification && <ErrorNotification />}
             {showSuccessNotification && <SuccessNotification />}
             <div className='flex py-2 border-b-[1px] border-gray-200'>
-                <div className='w-[50%] text-gray-700 font-medium'>Số dư:</div>
-                <div className="w-[50%] text-red-500 font-medium">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(user.accountBalance)}</div>
-            </div>
-            <div className='flex py-2 border-b-[1px] border-gray-200'>
                 <div className='w-[50%] text-gray-700 font-medium'>Tên liên hệ:</div>
                 <div className="w-[50%]">{user.name}</div>
             </div>

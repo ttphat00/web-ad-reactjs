@@ -27,9 +27,9 @@ function AdminHeader() {
                     </div>
                 </div> */}
                 <div className={styles.login}>
-                    <div className="flex items-center bg-gray-100 rounded-full px-2 py-2">
+                    {/* <div className="flex items-center bg-gray-100 rounded-full px-2 py-2">
                         <FaBell className='text-teal-500 text-lg cursor-pointer'/>
-                    </div>
+                    </div> */}
                     <div 
                     className={`${styles.user} flex cursor-pointer items-center relative h-full pl-7`}
                     >

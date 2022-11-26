@@ -67,7 +67,7 @@ function TransactionDetail() {
                     <div className='mb-1'>- Mã đơn hàng: <span className='font-medium'>{idOrder}</span></div>
                     <div>- Loại giao dịch: <span className='font-medium'>Gia hạn</span></div>
                     <div className='mt-1 mb-1'>- Ngày giao dịch: <span className='font-medium'>{formatTime(order.orderDate)}</span></div>
-                    <div>- Tổng số tiền đã thanh toán: <span className='font-medium'>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalCost)}</span></div>
+                    <div>- Tổng số tiền đã thanh toán: <span className='font-medium'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.totalCost)}</span></div>
                     <div className='mt-5 font-medium'>Chi tiết:</div>
                     <div className="flex flex-col">
                         <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -107,14 +107,14 @@ function TransactionDetail() {
                                                                             }else return null;
                                                                         })}
                                                                         <td className="text-sm text-gray-900 px-6 py-4 whitespace-nowrap">
-                                                                            {adDetail.cost/10000}
+                                                                            {adDetail.cost}
                                                                         </td>
                                                                     </Fragment>
                                                                 )
                                                             }else return null;
                                                         })}
                                                         <td className="text-sm text-gray-900 px-6 py-4 whitespace-nowrap">
-                                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(adDetail.cost)}
+                                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(adDetail.cost)}
                                                         </td>
                                                     </tr>
                                                 )
@@ -125,7 +125,7 @@ function TransactionDetail() {
                                                     Tổng tiền:
                                                 </td>
                                                 <td className="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalCost)}
+                                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.totalCost)}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -143,7 +143,7 @@ function TransactionDetail() {
                     <div className='mt-1 mb-1'>- Mã đơn hàng: <span className='font-medium'>{idOrder}</span></div>
                     <div>- Loại giao dịch: <span className='font-medium'>Hoàn trả</span></div>
                     <div className='mt-1 mb-1'>- Ngày giao dịch: <span className='font-medium'>{formatTime(order.approvalDate)}</span></div>
-                    <div>- Tổng số tiền đã hoàn trả: <span className='font-medium'>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalCost)}</span></div>
+                    <div>- Tổng số tiền đã hoàn trả: <span className='font-medium'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.totalCost)}</span></div>
                     <div className='mt-5 font-medium'>Chi tiết:</div>
                     <div className="flex flex-col">
                         <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -190,7 +190,7 @@ function TransactionDetail() {
                                                             }else return null;
                                                         })}
                                                         <td className="text-sm text-gray-900 px-6 py-4 whitespace-nowrap">
-                                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(adDetail.cost)}
+                                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(adDetail.cost)}
                                                         </td>
                                                     </tr>
                                                 )
@@ -201,7 +201,7 @@ function TransactionDetail() {
                                                     Tổng tiền:
                                                 </td>
                                                 <td className="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalCost)}
+                                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.totalCost)}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -219,7 +219,7 @@ function TransactionDetail() {
                     <div className='mt-1 mb-1'>- Mã đơn hàng: <span className='font-medium'>{idOrder}</span></div>
                     <div>- Loại giao dịch: <span className='font-medium'>Đăng tin</span></div>
                     <div className='mt-1 mb-1'>- Ngày giao dịch: <span className='font-medium'>{formatTime(order.orderDate)}</span></div>
-                    <div>- Tổng số tiền đã thanh toán: <span className='font-medium'>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalCost)}</span></div>
+                    <div>- Tổng số tiền đã thanh toán: <span className='font-medium'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.totalCost)}</span></div>
                     <div className='mt-5 font-medium'>Chi tiết:</div>
                     <div className="flex flex-col">
                         <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -266,7 +266,7 @@ function TransactionDetail() {
                                                             }else return null;
                                                         })}
                                                         <td className="text-sm text-gray-900 px-6 py-4 whitespace-nowrap">
-                                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(adDetail.cost)}
+                                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(adDetail.cost)}
                                                         </td>
                                                     </tr>
                                                 )
@@ -277,7 +277,7 @@ function TransactionDetail() {
                                                     Tổng tiền:
                                                 </td>
                                                 <td className="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalCost)}
+                                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.totalCost)}
                                                 </td>
                                             </tr>
                                         </tbody>

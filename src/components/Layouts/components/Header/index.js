@@ -101,16 +101,16 @@ function Header({ changeAvatar, handleSetUser }) {
                             })}>
                                 <ul>
                                     {filteredItems.map(ad => {
-                                        return ad.display && <li key={ad._id} onClick={() => {navigate(`/chi-tiet/${ad.title}`); setKeyWord('');}} className='hover:bg-gray-100 px-4 py-1 border-b-[1px] cursor-pointer'>{ad.title}</li>
+                                        return ad.display && <li key={ad._id} onClick={() => {navigate(`/chi-tiet/${ad._id}`); setKeyWord('');}} className='hover:bg-gray-100 px-4 py-1 border-b-[1px] cursor-pointer'>{ad.title}</li>
                                     })}
                                 </ul>
                             </div>
                         </div>
-                        {logedIn && 
+                        {/* {logedIn && 
                         <div className="flex items-center bg-gray-100 rounded-full px-2">
                             <FaBell className='text-teal-500 text-lg cursor-pointer'/>
                         </div>
-                        }
+                        } */}
                     </div>
                 </div>
                 <div className={styles.login}>

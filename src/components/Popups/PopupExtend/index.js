@@ -6,11 +6,13 @@ import axios from 'axios';
 import { apiURL, authorization } from '../../../config';
 import ErrorNotification from '../../Notification/ErrorNotification';
 import { useNavigate } from 'react-router-dom';
+import PaypalCheckoutButton from '../../PaypalCheckoutButton';
 
 function PopupExtend({ handleShowPopupExtend, idAd }) {
     let navigate = useNavigate();
     const [showErrorNotification, setShowErrorNotification] = useState(false);
-    const [ user, setUser ] = useState({});
+    const [showPaypalButton, setShowPaypalButton] = useState(false);
+    const [disabledButton, setDisabledButton] = useState(false);
     const [ durations, setDurations ] = useState(() => {
         const arr = [];
         for(let i=1; i<=90; i++){
@@ -27,69 +29,47 @@ function PopupExtend({ handleShowPopupExtend, idAd }) {
             .catch(err => console.log(err))
     }, [])
 
-    useEffect(() => {
-        axios.get(`${apiURL}customers/profile`, authorization(localStorage.getItem('token')))
-            .then(res => {
-                // console.log(res.data);
-                setUser(res.data);
-            })
-            .catch(err => console.log(err))
-    }, [])
-
     const handleChangeDuration = (e) => {
         setDuration(e.target.value);
+        setShowPaypalButton(false);
+        setDisabledButton(false);
     }
 
-    const handleExtend = () => {
+    const handleExtend = (orderId) => {
         const today = new Date();
         const expireDate = new Date(ad.expireDate);
         
         today.setHours(today.getHours() + 7);
         expireDate.setDate(expireDate.getDate() + parseInt(duration));
 
-        // if((parseInt(user.accountBalance) - parseInt(duration)*10000) >= 0){
-            // axios.put(`${apiURL}customers/update-my-info`, {
-            //     accountBalance: (parseInt(user.accountBalance) - parseInt(duration)*10000)
-            // }, authorization(localStorage.getItem('token')))
-            //     .then(res => {
-            //         console.log("Tru tien");
-            //         return axios.put(`${apiURL}ads/extend/${idAd}`, {
-            //              display: true,
-            //              expireDate: expireDate,
-            //              numberOfExtensionDays: parseInt(duration),
-            //          })
-            //     })
-                axios.put(`${apiURL}ads/extend/${idAd}`, {
-                    display: true,
-                    expireDate: expireDate,
-                    numberOfExtensionDays: parseInt(ad.numberOfExtensionDays) + parseInt(duration),
-                })
-                    .then(res => {
-                        console.log('Cap nhat thoi han tin quang cao')
-                        return axios.post(`${apiURL}orders`, {
-                            totalCost: parseInt(duration)*10000,
-                            idAd: idAd,
-                            cost: parseInt(duration)*10000,
-                            orderDate: today,
-                            status: 'Gia hạn tin',
-                        }, authorization(localStorage.getItem('token')))
-                    })
-                    .then(res => {
-                        console.log('Tao order moi');
-                        navigate(`/gia-han/${res.data._id}`);
-                    })
-                    .catch(err => {
-                        console.log(err);
-            
-                        setShowErrorNotification(true);
+        axios.put(`${apiURL}ads/extend/${idAd}`, {
+            display: true,
+            expireDate: expireDate,
+            numberOfExtensionDays: parseInt(ad.numberOfExtensionDays) + parseInt(duration),
+        })
+            .then(res => {
+                console.log('Cap nhat thoi han tin quang cao')
+                return axios.post(`${apiURL}orders`, {
+                    totalCost: parseInt(duration),
+                    idAd: idAd,
+                    cost: parseInt(duration),
+                    orderDate: today,
+                    status: 'Gia hạn tin',
+                }, authorization(localStorage.getItem('token')))
+            })
+            .then(res => {
+                console.log('Tao order moi');
+                navigate(`/gia-han/${res.data._id}`);
+            })
+            .catch(err => {
+                console.log(err);
+    
+                setShowErrorNotification(true);
 
-                        setTimeout(() => {
-                            setShowErrorNotification(false);
-                        }, 5000);
-                    })
-        // }else{
-        //     window.alert('Số dư tài khoản của bạn không đủ để thực hiện giao dịch này!');
-        // }
+                setTimeout(() => {
+                    setShowErrorNotification(false);
+                }, 5000);
+            })
     }
 
     return ( 
@@ -109,11 +89,11 @@ function PopupExtend({ handleShowPopupExtend, idAd }) {
                     </div>
                 </div>
                 <div>
-                    <form className="bg-white px-8 pt-6 pb-8 mb-4">
+                    <form className="bg-white px-8 pt-6 pb-6">
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="duration">
                                 Thêm thời hạn
-                                <span className='font-normal italic'> (10.000 VNĐ/ngày)</span>
+                                <span className='font-normal italic'> (1.00 USD/ngày)</span>
                             </label>
                             <div className='flex'>
                                 <div className="mb-3 w-[25%]">
@@ -143,14 +123,23 @@ function PopupExtend({ handleShowPopupExtend, idAd }) {
                         </div>
                         <div className="flex justify-between bg-[#FFF7F4] px-4 py-2 mb-6">
                             <div className='font-bold flex items-center'>Tổng thanh toán:</div>
-                            <div className='font-bold text-lg text-teal-500'>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(duration*10000)}</div>
+                            <div className='font-bold text-lg text-teal-500'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(duration)}</div>
                         </div>
                         <div className="flex items-center justify-between">
-                            <button onClick={handleExtend} className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="button">
+                            <button onClick={() => {setShowPaypalButton(true); setDisabledButton(true);}} className={clsx("bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full", {
+                                'bg-gray-500': disabledButton,
+                                'hover:bg-gray-500': disabledButton,
+                            })} disabled={disabledButton} type="button">
                                 Gia hạn
                             </button>
                         </div>
                     </form>
+                    {showPaypalButton &&
+                    <div className="flex items-center justify-center bg-white pb-6">
+                        <span className='text-gray-500 text-sm mr-2'>Thanh toán với</span>
+                        <PaypalCheckoutButton title={ad.title} totalCost={parseInt(duration)} handleApprove={handleExtend} />
+                    </div>
+                    }
                 </div>
             </div>
         </div>

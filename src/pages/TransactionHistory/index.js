@@ -154,8 +154,8 @@ function TransactionHistory({ handleSetPage }) {
                     id: order._id,
                     idOrder: <Link className="hover:text-teal-700" to={`/chi-tiet-giao-dich/${order._id}`}>{order._id}</Link>,
                     type: getOrderType(order.status),
-                    orderDate: formatTime(order.orderDate),
-                    totalCost: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalCost),
+                    orderDate: order.status==='Hoàn trả tiền' ? formatTime(order.approvalDate) : formatTime(order.orderDate),
+                    totalCost: new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.totalCost),
                 }
                 arr.push(row);
             }

@@ -1,5 +1,4 @@
 import styles from './Dashboard.module.css';
-import { FaCoins } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 
@@ -16,10 +15,6 @@ function Dashboard({ page, user }) {
                     </div>
                     <div className='text-sm text-gray-500'>
                         <Link to='/user/cap-nhat-tai-khoan' className='hover:text-teal-700'>Chỉnh sửa tài khoản</Link>
-                    </div>
-                    <div className='text-sm mt-1'>
-                        <FaCoins className='inline text-yellow-500 mr-1'/>
-                        Số dư: <span className='text-red-500 font-bold'>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(user.accountBalance)}</span>
                     </div>
                 </div>
             </div>

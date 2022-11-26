@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
 import styles from './Post.module.css';
-import { FaRegEdit } from "react-icons/fa";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import axios from 'axios';
 import { apiURL, authorization } from '../../config';
 import ErrorNotification from '../../components/Notification/ErrorNotification';
 import { Link, useNavigate } from 'react-router-dom';
+import PaypalCheckoutButton from '../../components/PaypalCheckoutButton';
+import clsx from 'clsx';
 
 function Post() {
     let navigate = useNavigate();
     const [showErrorNotification, setShowErrorNotification] = useState(false);
-    const [ user, setUser ] = useState({});
+    const [showPaypalButton, setShowPaypalButton] = useState(false);
+    const [disabledButton, setDisabledButton] = useState(false);
     const [ categories, setCategories ] = useState([]);
     const [ cities, setCities ] = useState([]);
     const [ durations, setDurations ] = useState(() => {
@@ -30,15 +32,6 @@ function Post() {
     const [ content, setContent ] = useState('');
     const [images, setImages] = useState([]);
     const [urlFile, setUrlFile] = useState([]);
-
-    useEffect(() => {
-        axios.get(`${apiURL}customers/profile`, authorization(localStorage.getItem('token')))
-            .then(res => {
-                // console.log(res.data);
-                setUser(res.data);
-            })
-            .catch(err => console.log(err))
-    }, [])
 
     useEffect(() => {
         axios.get(`${apiURL}categories`)
@@ -75,6 +68,8 @@ function Post() {
             urlArray.push(URL.createObjectURL(e.target.files[i]));
         }
         setUrlFile(urlArray);
+        setShowPaypalButton(false);
+        setDisabledButton(false);
     }
 
     // const isNumberKey = (e) => {
@@ -86,6 +81,8 @@ function Post() {
     const handleChangePrice = (e) => {
         setPrice(parseInt(e.target.value) ? parseInt(e.target.value) : '');
         setOtherPrice('');
+        setShowPaypalButton(false);
+        setDisabledButton(false);
     }
 
     const handleChangeOtherPrice = (e) => {
@@ -103,10 +100,14 @@ function Post() {
 
     const handleChangeTitle = (e) => {
         setTitle(e.target.value);
+        setShowPaypalButton(false);
+        setDisabledButton(false);
     }
 
     const handleChangeDuration = (e) => {
         setDuration(e.target.value);
+        setShowPaypalButton(false);
+        setDisabledButton(false);
     }
 
     const handleSubmit = (event) => {
@@ -115,63 +116,59 @@ function Post() {
         event.stopPropagation();
 
         if (form.checkValidity()) {
-            const today = new Date();
-            const expireDate = new Date();
-            
-            today.setHours(today.getHours() + 7);
-            expireDate.setHours(expireDate.getHours() + 7);
-            expireDate.setDate(today.getDate() + parseInt(duration));
-            
-            const uploadData = new FormData();
-
-            for(let i=0; i<images.length; i++){
-                uploadData.append("file", images[i]);
-            }
-            uploadData.append("title", title);
-            uploadData.append("content", content);
-            uploadData.append("idCity", city);
-            uploadData.append("idCategory", category);
-            uploadData.append("expireDate", expireDate);
-            uploadData.append("price", price || otherPrice);
-            uploadData.append("createdAt", today);
-            uploadData.append("duration", parseInt(duration));
-
-            // if((parseInt(user.accountBalance) - parseInt(duration)*10000) >= 0){
-                // axios.put(`${apiURL}customers/update-my-info`, {
-                //     accountBalance: (parseInt(user.accountBalance) - parseInt(duration)*10000)
-                // }, authorization(localStorage.getItem('token')))
-                //     .then(res => {
-                //         console.log("Tru tien");
-                //         return axios.post(`${apiURL}ads`, uploadData, authorization(localStorage.getItem('token')))
-                //     })
-                    axios.post(`${apiURL}ads`, uploadData, authorization(localStorage.getItem('token')))
-                    .then(res => {
-                        console.log('Luu vao bang Ads');
-                        return axios.post(`${apiURL}orders`, {
-                            totalCost: parseInt(duration)*10000,
-                            idAd: res.data._id,
-                            cost: parseInt(duration)*10000,
-                            orderDate: today,
-                        }, authorization(localStorage.getItem('token')))
-                    })
-                    .then(res => {
-                        console.log('Luu vao bang Orders');
-                        navigate(`/thanh-toan/${res.data._id}`);
-                    })
-                    .catch(err => {
-                        console.log(err);
-    
-                        setShowErrorNotification(true);
-    
-                        setTimeout(() => {
-                            setShowErrorNotification(false);
-                        }, 5000);
-                    });
-            // }else{
-            //     window.alert('Số dư tài khoản của bạn không đủ để thực hiện giao dịch này!');
-            // }
+            setShowPaypalButton(true);
+            setDisabledButton(true);
         }
     };
+
+    const handleApprove = (orderId) => {
+        
+        const today = new Date();
+        const expireDate = new Date();
+        
+        today.setHours(today.getHours() + 7);
+        expireDate.setHours(expireDate.getHours() + 7);
+        expireDate.setDate(today.getDate() + parseInt(duration));
+        
+        const uploadData = new FormData();
+
+        for(let i=0; i<images.length; i++){
+            uploadData.append("file", images[i]);
+        }
+        uploadData.append("title", title);
+        uploadData.append("content", content);
+        uploadData.append("idCity", city);
+        uploadData.append("idCategory", category);
+        uploadData.append("expireDate", expireDate);
+        uploadData.append("price", price || otherPrice);
+        uploadData.append("createdAt", today);
+        uploadData.append("duration", parseInt(duration));
+
+        axios.post(`${apiURL}ads`, uploadData, authorization(localStorage.getItem('token')))
+            .then(res => {
+                console.log('Luu vao bang Ads');
+                return axios.post(`${apiURL}orders`, {
+                    totalCost: parseInt(duration),
+                    idAd: res.data._id,
+                    cost: parseInt(duration),
+                    orderDate: today,
+                }, authorization(localStorage.getItem('token')))
+            })
+            .then(res => {
+                console.log('Luu vao bang Orders');
+                navigate(`/thanh-toan/${res.data._id}`);
+            })
+            .catch(err => {
+                console.log(err);
+
+                setShowErrorNotification(true);
+
+                setTimeout(() => {
+                    setShowErrorNotification(false);
+                }, 5000);
+            });
+        
+    }
 
     return (
         <>
@@ -181,7 +178,7 @@ function Post() {
                     <h2 className='text-xl font-medium'>ĐĂNG TIN</h2>
                 </div>
                 <div className={styles.form}>
-                    <form onSubmit={handleSubmit} className="bg-white px-8 pt-6 pb-8 mb-4">
+                    <form onSubmit={handleSubmit} className="bg-white px-8 pt-6 pb-6">
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">
                                 Chọn danh mục
@@ -305,7 +302,7 @@ function Post() {
                         <div className="mb-6">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="duration">
                                 Thời hạn
-                                <span className='font-normal italic'> (10.000 VNĐ/ngày)</span>
+                                <span className='font-normal italic'> (1.00 USD/ngày)</span>
                             </label>
                             <div className='flex'>
                                 <div className="mb-3 w-[15%]">
@@ -335,16 +332,24 @@ function Post() {
                         </div>
                         <div className="flex justify-between bg-[#FFF7F4] px-4 py-2">
                             <div className='font-bold flex items-center'>Tổng thanh toán:</div>
-                            <div className='font-bold text-lg text-teal-500'>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(duration*10000)}</div>
+                            <div className='font-bold text-lg text-teal-500'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(duration)}</div>
                         </div>
                         <div className="mb-6 bg-[#FFF7F4] px-4 py-2 text-sm">Khi bấm Đăng tin, bạn đã đồng ý với <Link to='' className='underline hover:text-teal-700'>quy định</Link> của chúng tôi.</div>
                         <div className="flex items-center justify-between">
-                            <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline m-auto" type="submit">
-                                <FaRegEdit className='inline mr-1'/>
+                            <button className={clsx("bg-teal-500 hover:bg-teal-700 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline m-auto", {
+                                'bg-gray-500': disabledButton,
+                                'hover:bg-gray-500': disabledButton,
+                            })} disabled={disabledButton} type="submit">
                                 Đăng tin
                             </button>
                         </div>
                     </form>
+                    {showPaypalButton &&
+                    <div className="flex items-center justify-center bg-white pb-6">
+                        <span className='text-gray-500 text-sm mr-2'>Thanh toán với</span>
+                        <PaypalCheckoutButton title={title} totalCost={parseInt(duration)} handleApprove={handleApprove} />
+                    </div>
+                    }
                 </div>
             </div>
         </>
