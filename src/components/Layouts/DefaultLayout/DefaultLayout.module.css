@@ -2,3 +2,9 @@
     width: var(--default-layout-width);
     margin: 85px auto 0;
 }
+
+@media (max-width: 390px){
+    .container{
+        margin: 95px auto 0;
+    }
+}

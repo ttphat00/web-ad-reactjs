@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { apiURL } from "../../config";
 import emailjs from '@emailjs/browser';
 import ErrorNotification from "../../components/Notification/ErrorNotification";
-// import SuccessNotification from "../../components/Notification/SuccessNotification";
+import SuccessNotification from "../../components/Notification/SuccessNotification";
 
 const columns = [
     {
@@ -81,7 +81,7 @@ const paginationComponentOptions = {
 
 function AdminAdsManage({ handleSetPage }) {
     const [showErrorNotification, setShowErrorNotification] = useState(false);
-    // const [showSuccessNotification, setShowSuccessNotification] = useState(false);
+    const [showSuccessNotification, setShowSuccessNotification] = useState(false);
     const [ tab, setTab ] = useState('Tin chờ duyệt');
     const [ ads, setAds ] = useState([]);
     const [ orders, setOrders ] = useState([]);
@@ -236,6 +236,7 @@ function AdminAdsManage({ handleSetPage }) {
             .then(res => {
                 console.log('Hien tin');
                 return axios.put(`${apiURL}orders/${idOrder}`, {
+                    idAdmin: localStorage.getItem('admin_id'),
                     status: 'Chấp nhận',
                     approvalDate: today,
                 })
@@ -275,6 +276,7 @@ function AdminAdsManage({ handleSetPage }) {
                 .then(result => {
                     console.log(result);
                     return axios.put(`${apiURL}orders/${idOrder}`, {
+                        idAdmin: localStorage.getItem('admin_id'),
                         status: 'Bị từ chối',
                         approvalDate: today,
                     })
@@ -289,6 +291,7 @@ function AdminAdsManage({ handleSetPage }) {
                         approvalDate: today,
                         status: 'Hoàn trả tiền',
                         idCustomer: idCustomer,
+                        idAdmin: localStorage.getItem('admin_id'),
                     })
                 })
                 .then(res => {
@@ -307,6 +310,84 @@ function AdminAdsManage({ handleSetPage }) {
                         setShowErrorNotification(false);
                     }, 5000);
                 })
+        }
+    }
+
+    const handleDeleteAd = async (idAd, idOrder) => {
+        const confirm = window.confirm('Bạn có chắc chắn muốn xóa tin quảng cáo này?');
+        
+        if(confirm){
+            try {
+
+                const res1 = await axios.put(`${apiURL}ads/extend/${idAd}`, {
+                    display: false,
+                });
+                console.log('An tin');
+
+                const res2 = await axios.put(`${apiURL}orders/${idOrder}`, {
+                    status: 'Tin đã xóa',
+                });
+                console.log('Thay doi trang thai thanh Tin bi xoa');
+
+                setShowSuccessNotification(true);
+
+                const arr = data.filter(ad => ad.id !== idAd);
+
+                setData(arr);
+
+                setTimeout(() => {
+                    setShowSuccessNotification(false);
+                }, 5000);
+            } catch (error) {
+                console.log(error);
+
+                setShowErrorNotification(true);
+
+                setTimeout(() => {
+                    setShowErrorNotification(false);
+                }, 5000);
+            }
+        }
+    }
+
+    const handleDeleteManyAd = async () => {
+        const confirm = window.confirm('Bạn có chắc chắn muốn xóa các tin đã chọn?');
+        
+        if(confirm){
+            try {
+
+                const res1 = await axios.put(`${apiURL}ads/delete-many`, {
+                    ads: selectedRows,
+                });
+                console.log('An cac tin');
+
+                const res2 = await axios.put(`${apiURL}orders/delete-many`, {
+                    ads: selectedRows,
+                });
+                console.log('Thay doi trang thai thanh Tin bi xoa');
+
+                setShowSuccessNotification(true);
+
+                setSelectedRows([]);
+
+                setToggleCleared(!toggleCleared);
+
+                const arr = data.filter(ad => !(selectedRows.includes(ad)));
+
+                setData(arr);
+
+                setTimeout(() => {
+                    setShowSuccessNotification(false);
+                }, 5000);
+            } catch (error) {
+                console.log(error);
+
+                setShowErrorNotification(true);
+
+                setTimeout(() => {
+                    setShowErrorNotification(false);
+                }, 5000);
+            }
         }
     }
 
@@ -379,7 +460,7 @@ function AdminAdsManage({ handleSetPage }) {
                             createdAt: formatTime(ad.createdAt),
                             reason: <div className="text-yellow-700">Nội dung không phù hợp</div>,
                             manage: <div className="flex text-red-500">
-                                <div className="cursor-pointer hover:text-red-700">Xóa</div>
+                                <div onClick={() => handleDeleteAd(ad._id, order._id)} className="cursor-pointer hover:text-red-700">Xóa</div>
                             </div>,
                         }
                         arr.push(row);
@@ -395,9 +476,9 @@ function AdminAdsManage({ handleSetPage }) {
     return ( 
         <div>
             {showErrorNotification && <ErrorNotification />}
-            {/* {showSuccessNotification && <SuccessNotification />} */}
+            {showSuccessNotification && <SuccessNotification />}
             <div className="flex border-b-[1px] border-gray-200 text-sm">
-            <div onClick={() => setTab('Tin chờ duyệt')} className={clsx("py-1 cursor-pointer mr-10", {
+            <div onClick={() => {setTab('Tin chờ duyệt'); setToggleCleared(!toggleCleared); setSelectedRows([]);}} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin chờ duyệt',
                     'border-teal-500': tab === 'Tin chờ duyệt',
                     'hover:text-black': tab !== 'Tin chờ duyệt',
@@ -405,7 +486,7 @@ function AdminAdsManage({ handleSetPage }) {
                 })}>
                     Tin chờ duyệt
                 </div>
-                <div onClick={() => setTab('Tin đã duyệt')} className={clsx("py-1 cursor-pointer mr-10", {
+                <div onClick={() => {setTab('Tin đã duyệt'); setToggleCleared(!toggleCleared); setSelectedRows([]);}} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin đã duyệt',
                     'border-teal-500': tab === 'Tin đã duyệt',
                     'hover:text-black': tab !== 'Tin đã duyệt',
@@ -425,7 +506,7 @@ function AdminAdsManage({ handleSetPage }) {
             <div className="relative">
                 {selectedRows.length!==0 &&
                 <div className="absolute z-50 top-[32px] left-[18px]">
-                    <button className="bg-red-500 hover:bg-red-700 text-white text-sm px-3 rounded">Xóa</button>
+                    <button onClick={handleDeleteManyAd} className="bg-red-500 hover:bg-red-700 text-white text-sm px-3 rounded">Xóa</button>
                 </div>
                 }
                 {tab==='Tin bị từ chối'

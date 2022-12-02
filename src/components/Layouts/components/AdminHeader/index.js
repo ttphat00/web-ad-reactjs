@@ -10,6 +10,7 @@ function AdminHeader() {
 
     const handleSignOut = () => {
         localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_id');
         navigate('/admin/dang-nhap');
     }
 

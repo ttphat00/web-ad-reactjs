@@ -85,3 +85,20 @@
     display: flex;
     cursor: pointer;
 }
+
+@media (max-width: 390px){
+    .inner{
+        width: 90%;
+        height: 945px;
+    }
+    .signin{
+        font-size: 43px;
+    }
+    .signup{
+        font-size: 43px;
+    }
+    .google{
+        width: 80%;
+        height: 100px;
+    }
+}

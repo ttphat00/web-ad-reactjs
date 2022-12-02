@@ -19,3 +19,9 @@
 .city{
     margin-top: 5px;
 }
+
+@media (max-width: 390px){
+    .item{
+        width: 100%;
+    }
+}

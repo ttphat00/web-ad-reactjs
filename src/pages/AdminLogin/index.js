@@ -37,6 +37,7 @@ function AdminLogin() {
             console.log(res.data);
 
             localStorage.setItem('admin_token', res.data.accessToken);
+            localStorage.setItem('admin_id', res.data.admin._id);
 
             navigate('/admin/quan-ly-nguoi-dung');
 

@@ -46,3 +46,83 @@
     align-items: center;
     justify-content: flex-end;
 }
+
+.threeLine{
+    display: none;
+}
+
+@media (max-width: 390px) {
+    .wrapper{
+        height: 80px;
+    }
+    .logo{
+        margin-left: 15px;
+    }
+    .post{
+        display: none;
+    }
+    .login{
+        position: absolute;
+        right: 60px;
+        top: 13px;
+        width: 220px;
+    }
+    .threeLine{
+        display: block;
+        position: absolute;
+        right: 15px;
+        top: 13px;
+    }
+    .inner{
+        position: relative;
+    }
+    .user:hover .dropdown{
+        display: none;
+    }
+    .dropdownButton{
+        display: none;
+    }
+    .backgroundMenuBar{
+        background-color: rgba(57, 58, 59, 0.9);
+    }
+    .menuBar{
+        animation: slideToLeft 0.3s linear;
+    }
+}
+
+@keyframes slideToLeft {
+    from{
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to{
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@media (min-width: 391px) and (max-width: 820px) {
+    .logo{
+        margin-left: 15px;
+    }
+    .post{
+        margin-right: 15px;
+    }
+    .threeLine{
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+    }
+    .user:hover .dropdown{
+        display: none;
+    }
+    .dropdownButton{
+        display: none;
+    }
+    .backgroundMenuBar{
+        background-color: rgba(57, 58, 59, 0.9);
+    }
+    .menuBar{
+        animation: slideToLeft 0.3s linear;
+    }
+}

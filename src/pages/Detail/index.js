@@ -106,27 +106,29 @@ function Detail() {
     }
 
     const handleSaveAd = () => {
-        if(savedAd){
-            axios.delete(`${apiURL}saved-ads/${ad._id}`, authorization(localStorage.getItem('token')))
-                .then(res => {
-                    console.log('Bo luu tin');
-                    setSavedAd(false);
-                })
-                .catch(err => {
-                    console.log(err);
-                })
-        }else{
-            axios.post(`${apiURL}saved-ads`, {
-                idAd: ad._id
-            },authorization(localStorage.getItem('token')))
-                .then(res => {
-                    console.log('Luu tin');
-                    setSavedAd(true);
-                })
-                .catch(err => {
-                    console.log(err);
-                })
-        }
+        if(localStorage.getItem('token')){
+            if(savedAd){
+                axios.delete(`${apiURL}saved-ads/${ad._id}`, authorization(localStorage.getItem('token')))
+                    .then(res => {
+                        console.log('Bo luu tin');
+                        setSavedAd(false);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            }else{
+                axios.post(`${apiURL}saved-ads`, {
+                    idAd: ad._id
+                },authorization(localStorage.getItem('token')))
+                    .then(res => {
+                        console.log('Luu tin');
+                        setSavedAd(true);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            }
+        }else window.alert('Bạn cần đăng nhập trước!');
     }
 
     return (
