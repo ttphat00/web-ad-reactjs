@@ -1,4 +1,4 @@
-export const apiURL = 'http://localhost:5000/api/';
+export const apiURL = process.env.REACT_APP_API_URL;
 
 export const authorization = (value) => {
     return {
