@@ -23,6 +23,7 @@ import AdminAdsManage from '../pages/AdminAdsManage';
 import AdminLogin from '../pages/AdminLogin';
 import RevenueStatistics from '../pages/RevenueStatistics';
 import NullLayout from '../components/Layouts/NullLayout';
+import OtherLayout from '../components/Layouts/OtherLayout';
 
 const publicRoutes = [
     { path: '/', component: Home },
@@ -44,6 +45,8 @@ const publicRoutes = [
     { path: '/admin/quan-ly-nguoi-dung', component: UsersManage, layout: AdminLayout },
     { path: '/admin/quan-ly-danh-muc', component: CategoriesManage, layout: AdminLayout },
     { path: '/admin/quan-ly-giao-dich', component: TransactionManage, layout: AdminLayout },
+    { path: '/admin/chi-tiet-giao-dich/:idOrder', component: TransactionDetail, layout: OtherLayout },
+    { path: '/admin/xem-truoc/:id', component: DetailPreview, layout: OtherLayout },
     { path: '/admin/quan-ly-tin', component: AdminAdsManage, layout: AdminLayout },
     { path: '/admin/thong-ke-doanh-thu', component: RevenueStatistics, layout: AdminLayout },
     { path: '*', component: NotFound },

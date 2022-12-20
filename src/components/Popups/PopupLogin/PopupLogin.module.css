@@ -10,7 +10,8 @@
 
 .inner{
     width: 450px;
-    height: 445px;
+    /* height: 445px; */
+    height: max-content;
     background-color: white;
     position: absolute;
     top: 50px;
@@ -65,7 +66,7 @@
     position: relative;
 }
 
-.form::before{
+/* .form::before{
     content: '';
     width: 50%;
     border-top: 1px solid rgb(173, 172, 172);
@@ -73,7 +74,7 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-}
+} */
 
 .google{
     width: 50%;
@@ -86,16 +87,15 @@
     cursor: pointer;
 }
 
-@media (max-width: 390px){
+@media (max-width: 739px){
     .inner{
         width: 90%;
-        height: 945px;
     }
     .signin{
-        font-size: 43px;
+        font-size: 20px;
     }
     .signup{
-        font-size: 43px;
+        font-size: 20px;
     }
     .google{
         width: 80%;

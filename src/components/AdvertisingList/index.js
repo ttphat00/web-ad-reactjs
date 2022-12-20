@@ -46,50 +46,71 @@ function AdvertisingList({ cities, keyWord, idCategory, idAd, idCity, status, it
         
         if(!idCategory && !keyWord){
             newAds.map(ad => {
-                if(ad.display){
+                const today = new Date();
+                const expireDate = new Date(ad.expireDate);
+                expireDate.setHours(expireDate.getHours() - 7);
+                if(ad.display && expireDate>=today){
                     arr.push(ad);
                 }
             });
         }else if(!idCategory && keyWord){
             newAds.map(ad => {
-                if(ad.display && ad.title.toLowerCase().includes(keyWord.toLowerCase())){
+                const today = new Date();
+                const expireDate = new Date(ad.expireDate);
+                expireDate.setHours(expireDate.getHours() - 7);
+                if(ad.display && expireDate>=today && ad.title.toLowerCase().includes(keyWord.toLowerCase())){
                     arr.push(ad);
                 }
             });
         }else if(idCategory && idAd){
             newAds.map(ad => {
-                if(ad.display && ad.idCategory === idCategory && ad._id !== idAd){
+                const today = new Date();
+                const expireDate = new Date(ad.expireDate);
+                expireDate.setHours(expireDate.getHours() - 7);
+                if(ad.display && expireDate>=today && ad.idCategory === idCategory && ad._id !== idAd){
                     arr.push(ad);
                 }
             });
         }else if(idCategory && idCity && status==='Tin mới nhất'){
             newAds.map(ad => {
-                if(ad.display && ad.idCategory === idCategory && ad.idCity === idCity){
+                const today = new Date();
+                const expireDate = new Date(ad.expireDate);
+                expireDate.setHours(expireDate.getHours() - 7);
+                if(ad.display && expireDate>=today && ad.idCategory === idCategory && ad.idCity === idCity){
                     arr.push(ad);
                 }
             });
         }else if(idCategory && idCity && status==='Tin cũ nhất'){
             oldAds.map(ad => {
-                if(ad.display && ad.idCategory === idCategory && ad.idCity === idCity){
+                const today = new Date();
+                const expireDate = new Date(ad.expireDate);
+                expireDate.setHours(expireDate.getHours() - 7);
+                if(ad.display && expireDate>=today && ad.idCategory === idCategory && ad.idCity === idCity){
                     arr.push(ad);
                 }
             });
         }else if(idCategory && !idCity && status==='Tin mới nhất'){
             newAds.map(ad => {
-                if(ad.display && ad.idCategory === idCategory){
+                const today = new Date();
+                const expireDate = new Date(ad.expireDate);
+                expireDate.setHours(expireDate.getHours() - 7);
+                if(ad.display && expireDate>=today && ad.idCategory === idCategory){
                     arr.push(ad);
                 }
             });
         }else if(idCategory && !idCity && status==='Tin cũ nhất'){
             oldAds.map(ad => {
-                if(ad.display && ad.idCategory === idCategory){
+                const today = new Date();
+                const expireDate = new Date(ad.expireDate);
+                expireDate.setHours(expireDate.getHours() - 7);
+                if(ad.display && expireDate>=today && ad.idCategory === idCategory){
                     arr.push(ad);
                 }
             });
         }
 
         setAds(arr);
-    }, [newAds, oldAds, idCity, status])
+    }, [newAds, oldAds, idCity, status, idAd, keyWord])
 
     return ( 
         <div className={styles.list}>
@@ -154,13 +175,13 @@ function AdvertisingList({ cities, keyWord, idCategory, idAd, idCity, status, it
                 renderOnZeroPageCount={null}
                 containerClassName="flex justify-center mt-5"
                 breakLabel="..."
-                breakClassName="bg-white border-[1px] hover:bg-gray-100 text-teal-700 max-[390px]:text-4xl"
+                breakClassName="bg-white border-[1px] hover:bg-gray-100 text-teal-700 max-[739px]:text-xl"
                 breakLinkClassName="px-2"
-                pageClassName="bg-white border-[1px] hover:bg-gray-100 text-teal-700 max-[390px]:text-4xl"
+                pageClassName="bg-white border-[1px] hover:bg-gray-100 text-teal-700 max-[739px]:text-xl"
                 pageLinkClassName="px-2"
-                previousClassName="bg-white border-[1px] hover:bg-gray-100 text-teal-700 max-[390px]:text-4xl"
+                previousClassName="bg-white border-[1px] hover:bg-gray-100 text-teal-700 max-[739px]:text-xl"
                 previousLinkClassName="px-2"
-                nextClassName="bg-white border-[1px] hover:bg-gray-100 text-teal-700 max-[390px]:text-4xl"
+                nextClassName="bg-white border-[1px] hover:bg-gray-100 text-teal-700 max-[739px]:text-xl"
                 nextLinkClassName="px-2"
                 activeClassName="bg-teal-500 text-white border-teal-500 hover:bg-teal-500"
                 activeLinkClassName=""

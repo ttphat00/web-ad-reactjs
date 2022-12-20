@@ -74,8 +74,8 @@ const columns2 = [
 // const data = [];
 
 const paginationComponentOptions = {
-    rowsPerPageText: 'Dòng trên trang',
-    rangeSeparatorText: 'trong',
+    rowsPerPageText: 'Số dòng hiển thị',
+    rangeSeparatorText: 'trong số',
     selectAllRowsItem: true,
     selectAllRowsItemText: 'Tất cả',
 };
@@ -83,6 +83,11 @@ const paginationComponentOptions = {
 function AdsManage({ handleSetPage }) {
     const [showPopupExtend, setShowPopupExtend] = useState(false);
     const [showPopupExtendOfExpireAd, setShowPopupExtendOfExpireAd] = useState(false);
+    const [renderData, setRenderData] = useState(false);
+    const [acceptedAds, setAcceptedAds] = useState(0);
+    const [waitingAds, setWaitingAds] = useState(0);
+    const [expireAds, setExpireAds] = useState(0);
+    const [refusedAds, setRefusedAds] = useState(0);
     const [idAd, setIdAd] = useState('');
     const [idOrder, setIdOrder] = useState('');
     const [showErrorNotification, setShowErrorNotification] = useState(false);
@@ -239,9 +244,10 @@ function AdsManage({ handleSetPage }) {
 
                 setShowSuccessNotification(true);
 
-                const arr = data.filter(ad => ad.id !== idAd);
+                // const arr = data.filter(ad => ad.id !== idAd);
 
-                setData(arr);
+                // setData(arr);
+                setRenderData(!renderData);
 
                 setTimeout(() => {
                     setShowSuccessNotification(false);
@@ -309,9 +315,10 @@ function AdsManage({ handleSetPage }) {
 
                 setToggleCleared(!toggleCleared);
 
-                const arr = data.filter(ad => !(selectedRows.includes(ad)));
+                // const arr = data.filter(ad => !(selectedRows.includes(ad)));
 
-                setData(arr);
+                // setData(arr);
+                setRenderData(!renderData);
 
                 setTimeout(() => {
                     setShowSuccessNotification(false);
@@ -338,7 +345,7 @@ function AdsManage({ handleSetPage }) {
         axios.get(`${apiURL}ads`)
             .then(res => setAds(res.data))
             .catch(err => console.log(err))
-    }, [data])
+    }, [])
 
     useEffect(() => {
         axios.get(`${apiURL}orders`)
@@ -347,7 +354,69 @@ function AdsManage({ handleSetPage }) {
                 setOrders(arr);
             })
             .catch(err => console.log(err))
-    }, [data])
+    }, [renderData])
+
+    useEffect(() => {
+        let accepted = 0;
+        orders.map(order => {
+            if(order.idCustomer===user._id && order.status==='Chấp nhận'){
+                ads.map(ad => {
+                    const today = new Date();
+                    const expireDate = new Date(ad.expireDate);
+                    expireDate.setHours(expireDate.getHours() - 7);
+                    if(ad._id===order.adDetails[0].idAd && ad.display && expireDate>=today){
+                        accepted += 1;
+                    }
+                });
+            }
+        });
+        setAcceptedAds(accepted);
+    }, [orders])
+    
+    useEffect(() => {
+        let waiting = 0;
+        orders.map(order => {
+            if(order.idCustomer===user._id && order.status==='Đang chờ xác nhận'){
+                ads.map(ad => {
+                    if(ad._id===order.adDetails[0].idAd){
+                        waiting += 1;
+                    }
+                });
+            }
+        });
+        setWaitingAds(waiting);
+    }, [orders])
+
+    useEffect(() => {
+        let expire = 0;
+        orders.map(order => {
+            if(order.idCustomer===user._id && order.status==='Chấp nhận'){
+                ads.map(ad => {
+                    const today = new Date();
+                    const expireDate = new Date(ad.expireDate);
+                    expireDate.setHours(expireDate.getHours() - 7);
+                    if(ad._id===order.adDetails[0].idAd && expireDate<today){
+                        expire += 1;
+                    }
+                });
+            }
+        });
+        setExpireAds(expire);
+    }, [orders])
+
+    useEffect(() => {
+        let refused = 0;
+        orders.map(order => {
+            if(order.idCustomer===user._id && order.status==='Bị từ chối'){
+                ads.map(ad => {
+                    if(ad._id===order.adDetails[0].idAd){
+                        refused += 1;
+                    }
+                });
+            }
+        });
+        setRefusedAds(refused);
+    }, [orders])
 
     useEffect(() => {
         const arr = [];
@@ -356,7 +425,10 @@ function AdsManage({ handleSetPage }) {
             orders.map(order => {
                 if(order.idCustomer===user._id && order.status==='Chấp nhận'){
                     ads.map(ad => {
-                        if(ad._id===order.adDetails[0].idAd && ad.display){
+                        const today = new Date();
+                        const expireDate = new Date(ad.expireDate);
+                        expireDate.setHours(expireDate.getHours() - 7);
+                        if(ad._id===order.adDetails[0].idAd && ad.display && expireDate>=today){
                             const row = {
                                 id: ad._id,
                                 idOrder: order._id,
@@ -445,7 +517,7 @@ function AdsManage({ handleSetPage }) {
 
         setData(arr);
 
-    }, [ads, tab])
+    }, [ads, tab, orders])
 
     return ( 
         <div>
@@ -461,6 +533,7 @@ function AdsManage({ handleSetPage }) {
                     'text-gray-500': tab !== 'Tin đang rao'
                 })}>
                     Tin đang rao
+                    <span className="text-teal-500 font-medium ml-2">{acceptedAds}</span>
                 </div>
                 <div onClick={() => {setTab('Tin chờ duyệt'); setToggleCleared(!toggleCleared); setSelectedRows([]);}} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin chờ duyệt',
@@ -469,6 +542,7 @@ function AdsManage({ handleSetPage }) {
                     'text-gray-500': tab !== 'Tin chờ duyệt'
                 })}>
                     Tin chờ duyệt
+                    <span className="text-teal-500 font-medium ml-2">{waitingAds}</span>
                 </div>
                 <div onClick={() => {setTab('Tin hết hạn'); setToggleCleared(!toggleCleared); setSelectedRows([]);}} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin hết hạn',
@@ -477,6 +551,7 @@ function AdsManage({ handleSetPage }) {
                     'text-gray-500': tab !== 'Tin hết hạn'
                 })}>
                     Tin hết hạn
+                    <span className="text-teal-500 font-medium ml-2">{expireAds}</span>
                 </div>
                 <div onClick={() => {setTab('Tin bị từ chối'); setToggleCleared(!toggleCleared); setSelectedRows([]);}} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin bị từ chối',
@@ -485,6 +560,7 @@ function AdsManage({ handleSetPage }) {
                     'text-gray-500': tab !== 'Tin bị từ chối'
                 })}>
                     Tin bị từ chối
+                    <span className="text-teal-500 font-medium ml-2">{refusedAds}</span>
                 </div>
             </div>
             <div className="relative">

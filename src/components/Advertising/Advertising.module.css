@@ -20,8 +20,11 @@
     margin-top: 5px;
 }
 
-@media (max-width: 390px){
+@media (max-width: 739px){
     .item{
         width: 100%;
+    }
+    .image{
+        width: 20%;
     }
 }

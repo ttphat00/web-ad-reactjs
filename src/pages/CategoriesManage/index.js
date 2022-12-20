@@ -4,6 +4,7 @@ import DataTable from 'react-data-table-component';
 import { FaWindowClose } from "react-icons/fa";
 import { apiURL } from "../../config";
 import PopupAddCategory from "../../components/Popups/PopupAddCategory";
+import PopupEditCategory from "../../components/Popups/PopupEditCategory";
 import SuccessNotification from "../../components/Notification/SuccessNotification";
 
 const columns = [
@@ -28,8 +29,8 @@ const columns = [
 // const data = [];
 
 const paginationComponentOptions = {
-    rowsPerPageText: 'Dòng trên trang',
-    rangeSeparatorText: 'trong',
+    rowsPerPageText: 'Số dòng hiển thị',
+    rangeSeparatorText: 'trong số',
     selectAllRowsItem: true,
     selectAllRowsItemText: 'Tất cả',
 };
@@ -37,6 +38,8 @@ const paginationComponentOptions = {
 function CategoriesManage({ handleSetPage }) {
     const [ categories, setCategories ] = useState([]);
     const [ showPopupAddCategory, setShowPopupAddCategory ] = useState(false);
+    const [ showPopupEditCategory, setShowPopupEditCategory ] = useState(false);
+    const [ idCategory, setIdCategory ] = useState('');
     const [showSuccessNotification, setShowSuccessNotification] = useState(false);
 
     //Data table
@@ -127,6 +130,51 @@ function CategoriesManage({ handleSetPage }) {
             .catch(err => console.log(err))
     }, [showSuccessNotification])
 
+    const handleDelete = async (id) => {
+        if(window.confirm('Bạn có chắc chắn muốn xóa danh mục này?')){
+            try {
+                const ads = await axios.get(`${apiURL}ads`)
+                for(let i=0; i<ads.data.length; i++){
+                    if(ads.data[i].idCategory===id){
+                        window.alert('Danh mục này có chứa tin quảng cáo nên bạn không thể xóa danh mục này!');
+                        return;
+                    }
+                }
+                const res = await axios.delete(`${apiURL}categories/${id}`)
+                console.log('Danh muc da bi xoa');
+
+                setShowSuccessNotification(true);
+
+                setTimeout(() => {
+                    setShowSuccessNotification(false);
+                }, 5000);
+            } catch (err) {
+                console.log(err);
+            }
+
+            // axios.get(`${apiURL}ads`)
+            //     .then(res => {
+            //         for(let i=0; i<res.data.length; i++){
+            //             if(res.data[i].idCategory===id){
+            //                 window.alert('Danh mục này có chứa tin quảng cáo nên bạn không thể xóa danh mục này!');
+            //                 return;
+            //             }
+            //         }
+            //         return axios.delete(`${apiURL}categories/${id}`)
+            //     })
+            //     .then(res => {
+            //         console.log('Danh muc da bi xoa');
+
+            //         setShowSuccessNotification(true);
+
+            //         setTimeout(() => {
+            //             setShowSuccessNotification(false);
+            //         }, 5000);
+            //     })
+            //     .catch(err => console.log(err))
+        }
+    }
+
     useEffect(() => {
         const arr = [];
 
@@ -136,8 +184,8 @@ function CategoriesManage({ handleSetPage }) {
                 image: <img className="w-[50px] h-[50px] object-contain" src={category.image} alt='' />,
                 title: category.title,
                 manage: <div className="flex">
-                    <div className="cursor-pointer mr-3 text-blue-500 hover:text-blue-700">Sửa</div>
-                    <div className="cursor-pointer text-red-500 hover:text-red-700">Xóa</div>
+                    <div onClick={() => {setShowPopupEditCategory(true); setIdCategory(category._id);}} className="cursor-pointer mr-3 text-blue-500 hover:text-blue-700">Sửa</div>
+                    <div onClick={() => handleDelete(category._id)} className="cursor-pointer text-red-500 hover:text-red-700">Xóa</div>
                 </div>,
             }
             arr.push(row);
@@ -151,6 +199,7 @@ function CategoriesManage({ handleSetPage }) {
         <div>
             {showSuccessNotification && <SuccessNotification />}
             {showPopupAddCategory && <PopupAddCategory handleShowPopupAddCategory={setShowPopupAddCategory} handleShowSuccessNotification={setShowSuccessNotification} />}
+            {showPopupEditCategory && <PopupEditCategory handleShowPopupEditCategory={setShowPopupEditCategory} handleShowSuccessNotification={setShowSuccessNotification} id={idCategory} />}
             <DataTable
                 columns={columns}
                 data={filteredItems}

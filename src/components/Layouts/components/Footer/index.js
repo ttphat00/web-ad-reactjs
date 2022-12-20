@@ -7,18 +7,18 @@ function Footer() {
         <footer className={styles.wrapper}>
             <div className={styles.inner}>
                 <div className={styles.contact}>
-                    <h3 className='text-base max-[390px]:text-4xl font-medium'>Liên hệ</h3>
+                    <h3 className='text-base max-[739px]:text-2xl font-medium'>Liên hệ</h3>
                     <div className={styles.content}>
                         <ul>
-                            <li>Địa chỉ: </li>
-                            <li>Điện thoại: </li>
-                            <li>Email: <Link to=''></Link></li>
-                            <li><Link to=''><FaFacebookSquare className='text-3xl max-[390px]:text-5xl text-blue-700' /></Link></li>
+                            <li>Địa chỉ: <span className='font-medium'>3/2, quận Ninh Kiều, TP Cần Thơ</span></li>
+                            <li>Điện thoại: <span className='font-medium'>0776509443</span></li>
+                            <li>Email: <span className='font-medium'>advertisingvietnam@gmail.com</span><Link to=''></Link></li>
+                            <li><Link to=''><FaFacebookSquare className='text-3xl max-[739px]:text-4xl text-blue-700' /></Link></li>
                         </ul>
                     </div>
                 </div>
                 <div className={styles.infor}>
-                    <h3 className='text-base max-[390px]:text-4xl font-medium'>Thông tin</h3>
+                    <h3 className='text-base max-[739px]:text-2xl font-medium'>Thông tin</h3>
                     <div className={styles.content}>
                         <ul>
                             <li><Link to=''>Điều khoản</Link></li>
@@ -27,7 +27,7 @@ function Footer() {
                     </div>
                 </div>
                 <div className={styles.instruction}>
-                    <h3 className='text-base max-[390px]:text-4xl font-medium'>Hướng dẫn</h3>
+                    <h3 className='text-base max-[739px]:text-2xl font-medium'>Hướng dẫn</h3>
                     <div className={styles.content}>
                         <ul>
                             <li><Link to=''>Đăng tin</Link></li>
@@ -36,7 +36,7 @@ function Footer() {
                     </div>
                 </div>
                 <div className={styles.support}>
-                    <h3 className='text-base max-[390px]:text-4xl font-medium'>Hỗ trợ</h3>
+                    <h3 className='text-base max-[739px]:text-2xl font-medium'>Hỗ trợ</h3>
                     <div className={styles.content}>
                         <ul>
                             <li><Link to=''>Trung tâm trợ giúp</Link></li>

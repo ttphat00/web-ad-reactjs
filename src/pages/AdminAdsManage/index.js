@@ -73,8 +73,8 @@ const columns2 = [
 // const data = [];
 
 const paginationComponentOptions = {
-    rowsPerPageText: 'Dòng trên trang',
-    rangeSeparatorText: 'trong',
+    rowsPerPageText: 'Số dòng hiển thị',
+    rangeSeparatorText: 'trong số',
     selectAllRowsItem: true,
     selectAllRowsItemText: 'Tất cả',
 };
@@ -82,6 +82,10 @@ const paginationComponentOptions = {
 function AdminAdsManage({ handleSetPage }) {
     const [showErrorNotification, setShowErrorNotification] = useState(false);
     const [showSuccessNotification, setShowSuccessNotification] = useState(false);
+    const [renderData, setRenderData] = useState(false);
+    const [acceptedAds, setAcceptedAds] = useState(0);
+    const [waitingAds, setWaitingAds] = useState(0);
+    const [refusedAds, setRefusedAds] = useState(0);
     const [ tab, setTab ] = useState('Tin chờ duyệt');
     const [ ads, setAds ] = useState([]);
     const [ orders, setOrders ] = useState([]);
@@ -244,9 +248,11 @@ function AdminAdsManage({ handleSetPage }) {
             .then(res => {
                 console.log('Thay doi trang thai thanh Chap nhan');
 
-                const arr = data.filter(ad => ad.id !== idAd);
-
-                setData(arr);
+                
+                // const arr = data.filter(ad => ad.id !== idAd);
+                
+                // setData(arr);
+                setRenderData(!renderData);
             })
             .catch(err => {
                 console.log(err);
@@ -258,7 +264,7 @@ function AdminAdsManage({ handleSetPage }) {
                 }, 5000);
             })
     }
-
+    
     const handleRefuseAd = (idAd, idOrder, idCustomer, totalCost, orderDate, cost) => {
         const confirm = window.confirm('Bạn có chắc chắn muốn từ chối tin này?');
         if(confirm){
@@ -297,9 +303,10 @@ function AdminAdsManage({ handleSetPage }) {
                 .then(res => {
                     console.log('Tao giao dich moi');
 
-                    const arr = data.filter(ad => ad.id !== idAd);
+                    // const arr = data.filter(ad => ad.id !== idAd);
 
-                    setData(arr);
+                    // setData(arr);
+                    setRenderData(!renderData);
                 })
                 .catch(err => {
                     console.log(err);
@@ -331,9 +338,10 @@ function AdminAdsManage({ handleSetPage }) {
 
                 setShowSuccessNotification(true);
 
-                const arr = data.filter(ad => ad.id !== idAd);
-
-                setData(arr);
+                // const arr = data.filter(ad => ad.id !== idAd);
+                
+                // setData(arr);
+                setRenderData(!renderData);
 
                 setTimeout(() => {
                     setShowSuccessNotification(false);
@@ -372,9 +380,10 @@ function AdminAdsManage({ handleSetPage }) {
 
                 setToggleCleared(!toggleCleared);
 
-                const arr = data.filter(ad => !(selectedRows.includes(ad)));
+                // const arr = data.filter(ad => !(selectedRows.includes(ad)));
 
-                setData(arr);
+                // setData(arr);
+                setRenderData(!renderData);
 
                 setTimeout(() => {
                     setShowSuccessNotification(false);
@@ -395,7 +404,7 @@ function AdminAdsManage({ handleSetPage }) {
         axios.get(`${apiURL}ads`)
             .then(res => setAds(res.data))
             .catch(err => console.log(err))
-    }, [data])
+    }, [])
 
     useEffect(() => {
         axios.get(`${apiURL}orders`)
@@ -404,7 +413,49 @@ function AdminAdsManage({ handleSetPage }) {
                 setOrders(arr);
             })
             .catch(err => console.log(err))
-    }, [data])
+    }, [renderData])
+
+    useEffect(() => {
+        let accepted = 0;
+        orders.map(order => {
+            if(order.status==='Chấp nhận'){
+                ads.map(ad => {
+                    if(ad._id===order.adDetails[0].idAd){
+                        accepted += 1;
+                    }
+                });
+            }
+        });
+        setAcceptedAds(accepted);
+    }, [orders])
+
+    useEffect(() => {
+        let waiting = 0;
+        orders.map(order => {
+            if(order.status==='Đang chờ xác nhận'){
+                ads.map(ad => {
+                    if(ad._id===order.adDetails[0].idAd){
+                        waiting += 1;
+                    }
+                });
+            }
+        });
+        setWaitingAds(waiting);
+    }, [orders])
+
+    useEffect(() => {
+        let refused = 0;
+        orders.map(order => {
+            if(order.status==='Bị từ chối'){
+                ads.map(ad => {
+                    if(ad._id===order.adDetails[0].idAd){
+                        refused += 1;
+                    }
+                });
+            }
+        });
+        setRefusedAds(refused);
+    }, [orders])
 
     useEffect(() => {
         const arr = [];
@@ -413,11 +464,11 @@ function AdminAdsManage({ handleSetPage }) {
             orders.map(order => {
                 if(order.status==='Chấp nhận'){
                     ads.map(ad => {
-                        if(ad._id===order.adDetails[0].idAd && ad.display){
+                        if(ad._id===order.adDetails[0].idAd){
                             const row = {
                                 id: ad._id,
-                                image: <Link to={`/chi-tiet/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                                title: <Link className="hover:text-teal-700" to={`/chi-tiet/${ad._id}`}>{ad.title}</Link>,
+                                image: <Link to={`/admin/xem-truoc/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                                title: <Link className="hover:text-teal-700" to={`/admin/xem-truoc/${ad._id}`}>{ad.title}</Link>,
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
                                 manage: '',
@@ -434,8 +485,8 @@ function AdminAdsManage({ handleSetPage }) {
                         if(ad._id===order.adDetails[0].idAd){
                             const row = {
                                 id: ad._id,
-                                image: <Link to={`/xem-truoc/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                                title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad._id}`}>{ad.title}</Link>,
+                                image: <Link to={`/admin/xem-truoc/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                                title: <Link className="hover:text-teal-700" to={`/admin/xem-truoc/${ad._id}`}>{ad.title}</Link>,
                                 createdAt: formatTime(ad.createdAt),
                                 expireDate: formatExpireTime(ad.expireDate),
                                 manage: <div className="flex">
@@ -455,8 +506,8 @@ function AdminAdsManage({ handleSetPage }) {
                         const row = {
                             id: ad._id,
                             idOrder: order._id,
-                            image: <Link to={`/xem-truoc/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
-                            title: <Link className="hover:text-teal-700" to={`/xem-truoc/${ad._id}`}>{ad.title}</Link>,
+                            image: <Link to={`/admin/xem-truoc/${ad._id}`}><img className="w-[50px] h-[50px] object-contain" src={ad.images[0].url} alt=""/></Link>,
+                            title: <Link className="hover:text-teal-700" to={`/admin/xem-truoc/${ad._id}`}>{ad.title}</Link>,
                             createdAt: formatTime(ad.createdAt),
                             reason: <div className="text-yellow-700">Nội dung không phù hợp</div>,
                             manage: <div className="flex text-red-500">
@@ -471,7 +522,7 @@ function AdminAdsManage({ handleSetPage }) {
 
         setData(arr);
 
-    }, [ads, tab])
+    }, [ads, tab, orders])
 
     return ( 
         <div>
@@ -485,6 +536,7 @@ function AdminAdsManage({ handleSetPage }) {
                     'text-gray-500': tab !== 'Tin chờ duyệt'
                 })}>
                     Tin chờ duyệt
+                    <span className="text-teal-500 font-medium ml-2">{waitingAds}</span>
                 </div>
                 <div onClick={() => {setTab('Tin đã duyệt'); setToggleCleared(!toggleCleared); setSelectedRows([]);}} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin đã duyệt',
@@ -493,6 +545,7 @@ function AdminAdsManage({ handleSetPage }) {
                     'text-gray-500': tab !== 'Tin đã duyệt'
                 })}>
                     Tin đã duyệt
+                    <span className="text-teal-500 font-medium ml-2">{acceptedAds}</span>
                 </div>
                 <div onClick={() => {setTab('Tin bị từ chối'); setToggleCleared(!toggleCleared); setSelectedRows([]);}} className={clsx("py-1 cursor-pointer mr-10", {
                     'border-b-[3px]': tab === 'Tin bị từ chối',
@@ -501,6 +554,7 @@ function AdminAdsManage({ handleSetPage }) {
                     'text-gray-500': tab !== 'Tin bị từ chối'
                 })}>
                     Tin bị từ chối
+                    <span className="text-teal-500 font-medium ml-2">{refusedAds}</span>
                 </div>
             </div>
             <div className="relative">

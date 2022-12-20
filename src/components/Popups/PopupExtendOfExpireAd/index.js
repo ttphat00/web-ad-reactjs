@@ -45,6 +45,8 @@ function PopupExtendOfExpireAd({ handleShowPopupExtendOfExpireAd, idAd, idOrder 
         expireDate.setDate(expireDate.getDate() + parseInt(duration));
 
         axios.put(`${apiURL}ads/extend/${idAd}`, {
+            display: false,
+            createdAt: today,
             expireDate: expireDate,
             numberOfExtensionDays: parseInt(ad.numberOfExtensionDays) + parseInt(duration),
         })

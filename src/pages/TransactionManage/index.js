@@ -33,8 +33,8 @@ const columns = [
 // const data = [];
 
 const paginationComponentOptions = {
-    rowsPerPageText: 'Dòng trên trang',
-    rangeSeparatorText: 'trong',
+    rowsPerPageText: 'Số dòng hiển thị',
+    rangeSeparatorText: 'trong số',
     selectAllRowsItem: true,
     selectAllRowsItemText: 'Tất cả',
 };
@@ -144,7 +144,7 @@ function TransactionManage({ handleSetPage }) {
         orders.map(order => {
             const row = {
                 id: order._id,
-                idOrder: <Link className="hover:text-teal-700" to={`/chi-tiet-giao-dich/${order._id}`}>{order._id}</Link>,
+                idOrder: <Link className="hover:text-teal-700" to={`/admin/chi-tiet-giao-dich/${order._id}`}>{order._id}</Link>,
                 type: getOrderType(order.status),
                 orderDate: order.status==='Hoàn trả tiền' ? formatTime(order.approvalDate) : formatTime(order.orderDate),
                 totalCost: new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.totalCost),

@@ -21,17 +21,17 @@ function Advertising({ id, image, title, idCity, time, cities }) {
                 </div>
                 <div className={styles.content}>
                     <div className={styles.title}>
-                        <h3 className="text-gray-700 max-[390px]:text-4xl">{title}</h3>
+                        <h3 className="text-gray-700 max-[390px]:text-xl">{title}</h3>
                     </div>
                     <div className={styles.city}>
                         {cities.map(city => {
                             if(city._id === idCity){
-                                return <h5 key={city._id} className="text-xs text-gray-500 max-[390px]:text-2xl"><FaMapMarkerAlt className="inline mr-1"/>{city.cityName}</h5>
+                                return <h5 key={city._id} className="text-xs text-gray-500 max-[390px]:text-base"><FaMapMarkerAlt className="inline mr-1"/>{city.cityName}</h5>
                             }else return null;
                         })}
                     </div>
                     <div className={styles.time}>
-                        <h5 className="text-xs text-gray-500 max-[390px]:text-2xl"><FaRegClock className="inline mr-1"/>{formatTime(time)}</h5>
+                        <h5 className="text-xs text-gray-500 max-[390px]:text-base"><FaRegClock className="inline mr-1"/>{formatTime(time)}</h5>
                     </div>
                 </div>
             </Link>

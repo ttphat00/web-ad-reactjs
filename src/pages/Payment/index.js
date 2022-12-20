@@ -127,7 +127,7 @@ function Payment() {
                             </div>
                         </div>
                     </div>
-                    <div className='mt-3 mb-6'>Hiện tại tin đăng của bạn đang được Quản trị viên duyệt.</div>
+                    <div className='mt-3 mb-6'>Hiện tại tin đăng của bạn đang được Quản trị viên duyệt. Thông báo duyệt tin sẽ được gửi đến email của bạn.</div>
                     <div className="flex items-center justify-center">
                         <Link to='/'>
                             <button className="mr-10 bg-teal-500 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">

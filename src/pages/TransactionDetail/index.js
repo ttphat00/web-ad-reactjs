@@ -140,7 +140,9 @@ function TransactionDetail() {
                 {order.status==='Hoàn trả tiền' &&
                 <div className='px-6 py-8 text-sm bg-white'>
                     <div className='font-medium'>Thông tin đơn hàng:</div>
-                    <div className='mt-1 mb-1'>- Mã đơn hàng: <span className='font-medium'>{idOrder}</span></div>
+                    <div className='mt-1 mb-1'>- Tên khách hàng: <span className='font-medium'>{user.name}</span></div>
+                    <div className='mb-1'>- Email khách hàng: <span className='font-medium'>{user.email}</span></div>
+                    <div className='mb-1'>- Mã đơn hàng: <span className='font-medium'>{idOrder}</span></div>
                     <div>- Loại giao dịch: <span className='font-medium'>Hoàn trả</span></div>
                     <div className='mt-1 mb-1'>- Ngày giao dịch: <span className='font-medium'>{formatTime(order.approvalDate)}</span></div>
                     <div>- Tổng số tiền đã hoàn trả: <span className='font-medium'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.totalCost)}</span></div>
@@ -216,7 +218,9 @@ function TransactionDetail() {
                 {order.status!=='Hoàn trả tiền' && order.status!=='Gia hạn tin' &&
                 <div className='px-6 py-8 text-sm bg-white'>
                     <div className='font-medium'>Thông tin đơn hàng:</div>
-                    <div className='mt-1 mb-1'>- Mã đơn hàng: <span className='font-medium'>{idOrder}</span></div>
+                    <div className='mt-1 mb-1'>- Tên khách hàng: <span className='font-medium'>{user.name}</span></div>
+                    <div className='mb-1'>- Email khách hàng: <span className='font-medium'>{user.email}</span></div>
+                    <div className='mb-1'>- Mã đơn hàng: <span className='font-medium'>{idOrder}</span></div>
                     <div>- Loại giao dịch: <span className='font-medium'>Đăng tin</span></div>
                     <div className='mt-1 mb-1'>- Ngày giao dịch: <span className='font-medium'>{formatTime(order.orderDate)}</span></div>
                     <div>- Tổng số tiền đã thanh toán: <span className='font-medium'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.totalCost)}</span></div>

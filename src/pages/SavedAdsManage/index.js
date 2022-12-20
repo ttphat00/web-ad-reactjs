@@ -27,13 +27,14 @@ const columns = [
 // const data = [];
 
 const paginationComponentOptions = {
-    rowsPerPageText: 'Dòng trên trang',
-    rangeSeparatorText: 'trong',
+    rowsPerPageText: 'Số dòng hiển thị',
+    rangeSeparatorText: 'trong số',
     selectAllRowsItem: true,
     selectAllRowsItemText: 'Tất cả',
 };
 
 function SavedAdsManage({ handleSetPage }) {
+    const [renderData, setRenderData] = useState(false);
     const [ ads, setAds ] = useState([]);
     const [ savedAds, setSavedAds ] = useState([]);
     const [ user, setUser ] = useState({});
@@ -115,8 +116,9 @@ function SavedAdsManage({ handleSetPage }) {
         axios.delete(`${apiURL}saved-ads/${idAd}`, authorization(localStorage.getItem('token')))
             .then(res => {
                 console.log('Bo luu tin');
-                const arr = data.filter(item => item.id !== idAd);
-                setData(arr);
+                // const arr = data.filter(item => item.id !== idAd);
+                // setData(arr);
+                setRenderData(!renderData);
             })
             .catch(err => {
                 console.log(err);
@@ -136,7 +138,7 @@ function SavedAdsManage({ handleSetPage }) {
                 setAds(res.data);
             })
             .catch(err => console.log(err))
-    }, [data])
+    }, [])
 
     useEffect(() => {
         axios.get(`${apiURL}saved-ads`)
@@ -145,7 +147,7 @@ function SavedAdsManage({ handleSetPage }) {
                 setSavedAds(arr);
             })
             .catch(err => console.log(err))
-    }, [data])
+    }, [renderData])
 
     useEffect(() => {
         const arr = [];
@@ -170,7 +172,7 @@ function SavedAdsManage({ handleSetPage }) {
 
         setData(arr);
 
-    }, [ads])
+    }, [ads, savedAds])
 
     return ( 
         <div>

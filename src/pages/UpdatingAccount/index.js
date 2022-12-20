@@ -21,7 +21,7 @@ function UpdatingAccount({ handleSetPage, changeAvatar }) {
             .then(res => {
                 setName(res.data.name);
                 setAddress(res.data.address);
-                setGender(res.data.gender);
+                setGender(res.data.gender || 'Nam');
                 setPhone(res.data.phone);
             })
             .catch(err => console.log(err))

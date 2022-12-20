@@ -1,0 +1,131 @@
+.category{
+    padding-bottom: 10px;
+    padding-left: 20px;
+}
+
+.content{
+    display: flex;
+    background-color: white
+}
+
+.detail{
+    width: 65%;
+    min-height: 700px;
+    border-right: 1px solid #f2f5f8;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    box-sizing: content-box;
+}
+
+.slider{
+    height: var(--lg-ad-image-height);
+    background-color: #eee;
+}
+
+.image{
+    width: 100%;
+    height: var(--lg-ad-image-height);
+    object-fit: contain;
+}
+
+.save{
+    width: 85px;
+    height: 25px;
+    font-weight: 500;
+    border: 1px solid var(--teal-700);
+    border-radius: 10px;
+    padding: 0 10px;
+    font-size: 14px;
+    color: var(--teal-700);
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    right: 0;
+}
+
+.title{
+    font-weight: bold;
+    font-size: 18px;
+    margin: 40px 0 10px;
+}
+
+.time{
+    color: gray;
+}
+
+.price{
+    color: #D92C37;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.address{
+    margin-bottom: 10px;
+}
+
+.description{
+    padding: 20px 0;
+    border-top: 1px solid #f2f5f8;
+    padding-left: 20px;
+    /* line-height: 30px; */
+}
+
+.contact{
+    flex: 1;
+    height: max-content;
+    padding-bottom: 20px;
+    margin-top: 10px;
+    /* background-color: #FFF7F4; */
+}
+
+.host{
+    display: flex;
+    margin: 20px 0 0 20px;
+}
+
+.avatar{
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.name{
+    padding-top: 5px;
+    margin-left: 10px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.phone{
+    width: 240px;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid var(--teal-700);
+    margin: 30px 0 0 20px;
+    color: var(--teal-700);
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.email{
+    width: 240px;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid var(--teal-700);
+    margin: 20px 0 0 20px;
+    color: var(--teal-700);
+    display: flex;
+    align-items: center;
+}
+
+.related{
+    margin-top: 10px;
+    background-color: white;
+    padding: 10px 20px 20px 20px;
+}

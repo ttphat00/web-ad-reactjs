@@ -23,6 +23,7 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
     const [code, setCode] = useState('');
     const [codeText, setCodeText] = useState('');
     const [showError, setShowError] = useState(false);
+    const [showErrorLogin, setShowErrorLogin] = useState(false);
     const [waitButton, setWaitButton] = useState(false);
 
     const handleShowSignIn = () => {
@@ -52,10 +53,12 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
 
     const handleChangeEmail = (e) => {
         setEmail(e.target.value);
+        setShowErrorLogin(false);
     }
 
     const handleChangePassword = (e) => {
         setPassword(e.target.value);
+        setShowErrorLogin(false);
     }
 
     const handleChangeCodeText = (e) => {
@@ -168,6 +171,8 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
             } catch (error) {
     
                 console.log(error);
+
+                setShowErrorLogin(true);
     
                 setShowErrorNotification(true);
     
@@ -185,9 +190,9 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
             <div onClick={(e) => e.stopPropagation()} className={styles.inner}>
                 <div 
                 onClick={() => handleShowLogin()}
-                className='absolute top-[-15px] right-[-10px] max-[390px]:right-[-35px] max-[390px]:top-[-25px] cursor-pointer'
+                className='absolute top-[-15px] right-[-10px] max-[739px]:right-[-15px] max-[739px]:top-[-23px] cursor-pointer'
                 >
-                    <FaWindowClose className='text-white text-xl max-[390px]:text-5xl rounded-full' />
+                    <FaWindowClose className='text-white text-xl max-[739px]:text-3xl rounded-full' />
                 </div>
                 <div className={styles.title}>
                     <div 
@@ -213,50 +218,51 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
                 {form === 'signup' && !showCodeText &&
                 <div>
                     <form className="bg-white px-8 pt-6 pb-8 mb-4" onSubmit={handleGetCode}>
-                        <div className="mb-4 max-[390px]:mt-8">
-                            <label className="max-[390px]:text-4xl block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+                        <div className="mb-4 max-[739px]:mt-2">
+                            <label className="max-[739px]:text-xl block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
                                 Tên liên hệ
                             </label>
-                            <input value={name} onChange={handleChangeName} className="max-[390px]:text-5xl shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="Tên liên hệ" required />
+                            <input value={name} onChange={handleChangeName} className="max-[739px]:text-xl shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="Tên liên hệ" required />
                         </div>
-                        <div className="mb-4 max-[390px]:mt-10">
-                            <label className="max-[390px]:text-4xl block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                        <div className="mb-4 max-[739px]:mt-5">
+                            <label className="max-[739px]:text-xl block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                                 Email
                             </label>
-                            <input value={email} onChange={handleChangeEmail} className="max-[390px]:text-5xl shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email" required />
+                            <input value={email} onChange={handleChangeEmail} className="max-[739px]:text-xl shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email" required />
                         </div>
-                        <div className="mb-6 relative max-[390px]:mt-10">
-                            <label className="max-[390px]:text-4xl block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                        <div className="mb-6 relative max-[739px]:mt-5">
+                            <label className="max-[739px]:text-xl block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
                                 Mật khẩu
                             </label>
-                            <input value={password} onChange={handleChangePassword} className="max-[390px]:text-5xl shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type={toggle ? 'password' : 'text'} placeholder="Mật khẩu" required />
+                            <input value={password} onChange={handleChangePassword} className="max-[739px]:text-xl shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type={toggle ? 'password' : 'text'} placeholder="Mật khẩu" required />
                             {toggle
                             ?
-                            <FaEye onClick={handleTogglePassword} className='max-[390px]:text-5xl absolute right-[8px] bottom-[21px] text-lg text-teal-500 cursor-pointer'/>
+                            <FaEye onClick={handleTogglePassword} className='max-[739px]:text-xl absolute right-[8px] bottom-[21px] text-lg text-teal-500 cursor-pointer'/>
                             :
-                            <FaEyeSlash onClick={handleTogglePassword} className='max-[390px]:text-5xl absolute right-[8px] bottom-[21px] text-lg text-teal-500 cursor-pointer'/>
+                            <FaEyeSlash onClick={handleTogglePassword} className='max-[739px]:text-xl absolute right-[8px] bottom-[21px] text-lg text-teal-500 cursor-pointer'/>
                             }
                         </div>
-                        <div className="flex items-center justify-between max-[390px]:mt-10">
-                            <button className="bg-teal-500 hover:bg-teal-700 text-white max-[390px]:text-5xl max-[390px]:py-6 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
+                        <div className="flex items-center justify-between max-[739px]:mt-5">
+                            <button className="bg-teal-500 hover:bg-teal-700 text-white max-[739px]:text-xl max-[739px]:py-2 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
                                 Đăng ký
                             </button>
                         </div>
+                        <div className='text-sm text-gray-500 mt-3 max-[739px]:text-sm'>Khi bấm Đăng ký, mã xác nhận sẽ được gửi về Email của bạn.</div>
                     </form>
                 </div>
                 }   
                 {form === 'signup' && showCodeText &&
                 <div>
                     <form className="bg-white px-8 pt-6 pb-8 mb-4">
-                        <div className="mb-4 max-[390px]:mt-8">
-                            <label className="max-[390px]:text-4xl block text-gray-700 text-sm font-bold mb-2" htmlFor="code">
+                        <div className="mb-4 max-[739px]:mt-2">
+                            <label className="max-[739px]:text-xl block text-gray-700 text-sm font-bold mb-2" htmlFor="code">
                                 Mã xác nhận
                             </label>
-                            <input value={codeText} onChange={handleChangeCodeText} className="max-[390px]:text-5xl shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="code" type="text" placeholder="Nhập mã xác nhận" required />
+                            <input value={codeText} onChange={handleChangeCodeText} className="max-[739px]:text-xl shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="code" type="text" placeholder="Nhập mã xác nhận" required />
                             {showError && <span className='text-sm text-red-500'>Mã xác nhận không đúng.</span>}
                         </div>
-                        <div className="flex items-center justify-between max-[390px]:mt-10">
-                            <button onClick={handleSignUp} className={clsx("bg-teal-500 hover:bg-teal-700 text-white max-[390px]:text-5xl max-[390px]:py-6 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full", {
+                        <div className="flex items-center justify-between max-[739px]:mt-5">
+                            <button onClick={handleSignUp} className={clsx("bg-teal-500 hover:bg-teal-700 text-white max-[739px]:text-xl max-[739px]:py-2 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full", {
                                 'cursor-wait': waitButton,
                                 'bg-gray-500': waitButton,
                                 'hover:bg-gray-500': waitButton,
@@ -271,41 +277,42 @@ function PopupLogin({ handleShowLogin, handleLogedIn }) {
                 <div>
                     <div className={styles.form}>
                         <form className="bg-white px-8 pt-6 pb-8 mb-4" onSubmit={handleSignIn}>
-                            <div className="mb-4 max-[390px]:mt-8">
-                                <label className="max-[390px]:text-4xl block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                            <div className="mb-4 max-[739px]:mt-2">
+                                <label className="max-[739px]:text-xl block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                                     Email
                                 </label>
-                                <input value={email} onChange={handleChangeEmail} className="max-[390px]:text-5xl shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email" required />
+                                <input value={email} onChange={handleChangeEmail} className="max-[739px]:text-xl shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email" required />
                             </div>
-                            <div className="mb-6 relative max-[390px]:mt-10">
-                                <label className="max-[390px]:text-4xl block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                            {showErrorLogin && <div className='text-sm text-red-500 italic mb-4'>Tài khoản hoặc mật khẩu không đúng</div>}
+                            <div className="mb-6 relative max-[739px]:mt-5">
+                                <label className="max-[739px]:text-xl block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
                                     Mật khẩu
                                 </label>
-                                <input value={password} onChange={handleChangePassword} className="max-[390px]:text-5xl shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type={toggle ? 'password' : 'text'} placeholder="Mật khẩu" required />
+                                <input value={password} onChange={handleChangePassword} className="max-[739px]:text-xl shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type={toggle ? 'password' : 'text'} placeholder="Mật khẩu" required />
                                 {toggle
                                 ?
-                                <FaEye onClick={handleTogglePassword} className='max-[390px]:text-5xl absolute right-[8px] bottom-[21px] text-lg text-teal-500 cursor-pointer'/>
+                                <FaEye onClick={handleTogglePassword} className='max-[739px]:text-xl absolute right-[8px] bottom-[21px] text-lg text-teal-500 cursor-pointer'/>
                                 :
-                                <FaEyeSlash onClick={handleTogglePassword} className='max-[390px]:text-5xl absolute right-[8px] bottom-[21px] text-lg text-teal-500 cursor-pointer'/>
+                                <FaEyeSlash onClick={handleTogglePassword} className='max-[739px]:text-xl absolute right-[8px] bottom-[21px] text-lg text-teal-500 cursor-pointer'/>
                                 }
                             </div>
-                            <div className="flex items-center justify-between max-[390px]:mt-10">
-                                <button className="bg-teal-500 hover:bg-teal-700 text-white max-[390px]:text-5xl max-[390px]:py-6 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-[60%]" type="submit">
+                            <div className="flex items-center justify-between max-[739px]:mt-5">
+                                <button className="bg-teal-500 hover:bg-teal-700 text-white max-[739px]:text-xl max-[739px]:py-2 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-[60%]" type="submit">
                                     Đăng nhập
                                 </button>
-                                <Link className="max-[390px]:text-4xl inline-block align-baseline font-bold text-sm text-teal-500 hover:text-teal-800" to="">
+                                <Link className="max-[739px]:text-sm inline-block align-baseline font-bold text-sm text-teal-500 hover:text-teal-800" to="">
                                     Quên mật khẩu?
                                 </Link>
                             </div>
                         </form>
                     </div>
-                    <div>
-                        <div className='max-[390px]:text-4xl max-[390px]:mt-8 text-center text-sm text-gray-500 mb-3'>Đăng nhập với</div>
+                    {/* <div>
+                        <div className='max-[739px]:text-4xl max-[739px]:mt-8 text-center text-sm text-gray-500 mb-3'>Đăng nhập với</div>
                         <div className={styles.google}>
-                            <img className='w-[40px] max-[390px]:w-[96px] h-full object-contain' src='https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png' alt='' />
-                            <div className='max-[390px]:text-5xl flex-1 flex items-center justify-center translate-x-[-20px] font-medium text-blue-500'>Google</div>
+                            <img className='w-[40px] max-[739px]:w-[96px] h-full object-contain' src='https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png' alt='' />
+                            <div className='max-[739px]:text-5xl flex-1 flex items-center justify-center translate-x-[-20px] font-medium text-blue-500'>Google</div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 }
             </div>
